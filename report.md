@@ -2,7 +2,7 @@
 
 **Snapshot:** 2026-09-10  
 **Repository:** `Slo-Pix/Sovereign-WF2`  
-**Status:** Implementation is substantially complete and locally validated. A single continuous public-testnet run is still outstanding.
+**Status:** Implementation is substantially complete and locally validated. The public simulation-broadcast rehearsal has reached Sepolia BREACHED; finality-gated Arc lock/unwind and owner reconciliation remain outstanding.
 
 ## Executive Summary
 
@@ -12,7 +12,7 @@ Sovereign is organized into three connected workflows:
 2. **Workflow 2:** confidential CRE evaluation, decision delivery, private position-feed consumption, and Sepolia-to-Arc relaying.
 3. **Workflow 3:** agent negotiation, canonical offer signing, position simulation/provider operations, and the frontend.
 
-The local implementation includes the core lifecycle, confidential decision logic, authenticated simulated position service, trusted relayer, agent signing fixes, and public-state frontend updates. The remaining work is primarily owner review, real identities and funding, deployment/wiring, hosted HTTPS provider operations, one real agreement, and an end-to-end testnet rehearsal.
+The local implementation includes the core lifecycle, confidential decision logic, authenticated simulated position service, trusted relayer, agent signing fixes, and public-state frontend updates. The remaining work is primarily finality-gated Arc settlement evidence, explorer verification, hosted HTTPS provider operations, and optional approved DON deployment.
 
 ## Work Completed
 
@@ -59,9 +59,9 @@ The local implementation includes the core lifecycle, confidential decision logi
 ### Workflow 1 Remaining
 
 - Review and approve the shared ABI, privacy, frontend, and cross-team changes.
-- Confirm the real deployment identities: chain targets, registry/sink addresses, current forwarder, workflow ID, workflow owner, and receiver identity.
-- Deploy and wire the receiver using the authorized sink-owner account; record the real address, ABI revision, wiring transaction, and receipts.
-- Run the receiver preflight after cutover and test authorized and unauthorized report handling.
+- Review the recorded deployment identities: chain targets, registry/sink addresses, mock forwarder, simulator workflow identity, and receiver identity.
+- Complete explorer verification for the deployed receiver and retain the ABI revision, wiring transactions, and receipts.
+- Preserve the receiver preflight and authorized/unauthorized report evidence as part of the public demo record.
 - Confirm Arc escrow token, authorized relayer, gas balance, USDC balance, and allowance using the intended operational accounts.
 - Define and implement the owner-authorized registry reconciliation policy for `markUnwinding` and `markSettled`.
 - Decide whether ENS authorization is retained. If retained, add and deploy a real registry authorization hook; a displayed ENS name alone is not permission enforcement.
@@ -70,11 +70,11 @@ The local implementation includes the core lifecycle, confidential decision logi
 
 - Review and package the local CRE, provider, and relayer changes with the other members; separate approved source from local evidence, databases, generated output, secrets, and assistant tooling.
 - Choose and document the execution mode: reproducible CLI simulation or approved confidential deployment. Confidential deployment requires the relevant Chainlink private-beta approval.
-- Configure the actual agreement ID, complete public terms, expected contract addresses, policy commitment, receiver identity, and decision nonce source.
+- Preserve the frozen agreement ID, public terms, expected contract addresses, policy commitment, receiver identity, and decision nonce evidence.
 - Provision the hosted HTTPS position-feed origin and scoped read credential privately. Keep the writer credential outside CRE.
 - Run the receiver preflight with real public identity values and verify feed authorization, freshness, revocation, and denial behavior without exposing private data.
-- Configure and dry-run the relayer with correct finalized source ranges, destination ranges, confirmation depth, persistent state, and authorized identity.
-- With explicit operational approval, run CRE delivery and relayer broadcast, then verify receipts, events, balances, restart behavior, and duplicate prevention.
+- Configure and dry-run the relayer with correct finalized source ranges, destination ranges, confirmation depth, persistent state, and authorized identity. The current run is correctly fail-closed while source finality trails the breach.
+- After finality, run the relayer broadcast, then verify receipts, events, balances, restart behavior, and duplicate prevention.
 - Capture one continuous evidence set with actual code revision, receiver/escrow addresses, transaction hashes, event order, and token movements.
 - Implement ENS only if the team keeps it in scope and Workflow 1 supplies the authoritative hook.
 
@@ -137,4 +137,6 @@ The three workflows are implemented to a strong local and synthetic-test level. 
 - Reconciliation requires a finalized Sepolia breach receipt and a confirmation-qualified Arc full unwind receipt. It verifies exact event provenance, IDs, nonce, complete registry/escrow binding, full-capital return, canonical wiring, owner identity, pending nonce absence, and finality between writes.
 - Broadcast is explicit and sequential; restart from `UNWIND` is supported, while partial or discretionary settlement is rejected. Terminal `SETTLED` requires separate settlement event evidence.
 - Added 47 focused tests for policy, replay/stale nonce, malformed or duplicate evidence, reorg identity, binding mismatch, SAFE/validation misuse, partial return, and terminal-state handling.
-- No live write was performed by this change. Receiver deployment remains blocked until the approved CRE workflow ID, workflow owner, and report forwarder are supplied; the existing mock forwarder is not treated as DON approval. Arc agreement principal/capital funding also remains an operator prerequisite.
+- The mock-forwarder simulation path is wired on Sepolia: receiver `0xA4Ce101a95DCD797690d7Ae8845ea6989D9FDb62`, simulator workflow ID `0x1111111111111111111111111111111111111111111111111111111111111111`, simulator owner `0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa`, and forwarder `0x15fC6ae953E024d975e77382eEeC56A9101f9F88`. The CLI's config-derived hash is not the identity placed into mock-forwarder metadata. This is real Sepolia deployment and wiring, but not DON attestation.
+- A fresh public agreement at `0x08aea1ace117f14f97f852be19c3a68ad07a43be6b42099a24bba64a27ae389b` was activated by receiver-accepted transaction `0x780399f2021a73c88262c51d828935475db79e188889f0b97ee746f3932adaa6`. Arc approval is exactly 10,000,000 USDC base units. The receiver-accepted breach transaction is `0xe2d5de804e294716501baf7ee73203c05fd12ad041ca757275262cdd5c938626`; Arc lock/unwind and owner reconciliation remain finality-gated.
+- An earlier transaction `0x4a9a21b8038f6dfa609ea6b0df908972ce610e430e1b3fad859654a5794b00a7` reached the mock forwarder but emitted `ReportProcessed(..., false)` because the first receiver used the config-derived hash/owner rather than the simulator's fixed metadata identity. It did not consume a sink nonce or change agreement state; the active receiver supersedes it.

@@ -41,6 +41,6 @@ async function main() {
   ].join('\n') + '\n';
   await writeFile(envPath, secrets, { mode: 0o600 });
   await chmod(configPath, 0o600); await chmod(envPath, 0o600);
-  console.log(JSON.stringify({ configPath, envPath, receiver, workflowOwner: owner, positionOrigin: origin }));
+  console.log(JSON.stringify({ configPath, envPath, receiver, deployer: owner, positionOrigin: origin }));
 }
 main().catch(() => { console.error('CRE configuration freeze failed.'); process.exitCode = 1; });

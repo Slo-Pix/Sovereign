@@ -60,6 +60,8 @@ Use [sovereign/config.example.json](sovereign/config.example.json) as the public
 - Set the actual agreement ID and all eight final terms, including offer expiry and nonce.
 - Set `positionOrigin` and `positionAuthSecretId`; the old `positionUrl` is rejected. Put credentials in the secret store, not public config. [PRIVATE_FEED.md](PRIVATE_FEED.md) defines the exact credential format and provider contract.
 - Keep `delivery: report-only` until an authenticated receiver is deployed and verified. For Sepolia writes, set its actual `reportReceiver`; the existing sink is not a substitute.
+- `delivery: simulation-sepolia` is the only mode that permits an explicit `http://127.0.0.1:PORT` feed while broadcasting through the mock forwarder. Production `delivery: sepolia` remains HTTPS-only.
+- CRE CLI v1.33.0 mock broadcast uses fixed simulator workflow identity values, documented in [INTEGRATION.md](INTEGRATION.md). The config-derived workflow hash must not be substituted for those mock metadata values.
 - Trigger index 0 validates offers; index 1 monitors breaches. `NO_DECISION` is not a SAFE attestation.
 - [sovereign/secrets.yaml](sovereign/secrets.yaml) maps secret IDs to local simulation variables. [The environment example](.env.example) contains empty placeholders only. Never use real sensitive policies with local simulation.
 - [project.yaml](project.yaml) configures CRE's Sepolia RPC. `SEPOLIA_RPC_URL` and `ARC_RPC_URL` separately configure the read-only preflight and are never printed by it.

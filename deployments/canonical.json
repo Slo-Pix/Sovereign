@@ -1,12 +1,18 @@
 {
-  "generatedAt": "2026-09-08",
+  "generatedAt": "2026-09-10",
   "sepolia": {
     "chainId": 11155111,
     "intentRegistry": "0x2AB9B14995048f0A6e0A80830c2654a1d72f8deD",
     "agreementRegistry": "0x81134eF33D0C195c6c17610f40C5FF53afBD6AF4",
     "decisionSink": "0xFAf580b27CBE494adcE3F4D9F78caB42a6e3088D",
     "creForwarder": "0x15fC6ae953E024d975e77382eEeC56A9101f9F88",
+    "creReportReceiver": "0xA4Ce101a95DCD797690d7Ae8845ea6989D9FDb62",
+    "creWorkflowId": "0x1111111111111111111111111111111111111111111111111111111111111111",
+    "creWorkflowOwner": "0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa",
+    "creConfigDerivedWorkflowHash": "0x0082c14e71ee1ad74670fe0f9a35bb79726b7f0bdff4e43a948bb25799349826",
+    "creDeliveryMode": "simulation-broadcast-mock-forwarder",
     "verified": true,
+    "creReportReceiverVerified": false,
     "explorer": "https://sepolia.etherscan.io"
   },
   "arcTestnet": {

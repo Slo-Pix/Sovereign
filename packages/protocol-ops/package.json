@@ -9,7 +9,8 @@
     "reconcile": "bun --no-env-file src/reconcile.ts",
     "bootstrap-demo": "bun --no-env-file src/bootstrap-demo.ts",
     "provision-feed": "bun --no-env-file src/provision-feed.ts",
-    "freeze-config": "bun --no-env-file src/freeze-config.ts"
+    "freeze-config": "bun --no-env-file src/freeze-config.ts",
+    "publish-position": "bun --no-env-file src/publish-position.ts"
   },
   "dependencies": { "viem": "2.34.0" },
   "devDependencies": { "@types/bun": "1.3.10", "typescript": "5.9.3" }

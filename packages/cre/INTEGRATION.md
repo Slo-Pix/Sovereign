@@ -1,8 +1,8 @@
 # Workflow 2: requests to complete the real testnet demo
 
-## Member A — Sepolia report receiver (blocking)
+## Member A — Sepolia report receiver
 
-The [receiver source](../../contracts/src/CREDecisionReceiver.sol) and [deployment script](../../deploy/DeployCREReceiver.s.sol) are integrated from upstream commit `40cd161`. The separate upstream handoff was removed in `4f19519`; no receiver deployment/identity record accompanied that removal. Live configuration remains pending. The existing deployed DecisionSink only exposes `recordDecision`; CRE's forwarder calls `onReport(bytes metadata, bytes report)`, not arbitrary application calldata.
+The [receiver source](../../contracts/src/CREDecisionReceiver.sol) and [deployment script](../../deploy/DeployCREReceiver.s.sol) are integrated from upstream commit `40cd161`. The active simulation receiver is deployed and wired to the existing DecisionSink; the public address and fixed mock metadata identity are recorded in [`deployments/canonical.json`](../../deployments/canonical.json). The existing deployed DecisionSink only exposes `recordDecision`; CRE's forwarder calls `onReport(bytes metadata, bytes report)`, not arbitrary application calldata.
 
 Use the following requirements as the receiver deployment/integration checklist (not a request to rebuild the implemented adapter):
 
@@ -21,7 +21,15 @@ The sink error ABI now matches `NonActionableDecision`, and the compiler-verifie
 
 For CLI simulation broadcast use the **Sepolia mock forwarder** `0x15fC6ae953E024d975e77382eEeC56A9101f9F88`; for approved DON deployment the tenant currently lists `0xF8344CFd5c43616a4366C34E3EEE75af79a74482`. Mock delivery is not cryptographic DON authenticity. Separate deployment environments; never imply a simulator report proves attestation.
 
-## Arc transport — trusted relayer available; live configuration pending
+CRE CLI v1.33.0 simulation uses fixed mock metadata identity values: workflow ID
+`0x1111111111111111111111111111111111111111111111111111111111111111`
+and workflow owner `0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa`. The value printed by
+`cre workflow hash` is the deploy-style identity, not the identity inserted into
+mock-forwarder simulation reports. A simulation receiver must bind to the fixed
+mock values; a DON receiver must instead bind to the actual deployed workflow
+identity. Never reuse the simulation receiver for DON delivery.
+
+## Arc transport — trusted relayer available; finality-gated rehearsal in progress
 
 Arc is supported; see [the capability finding](evidence/arc-write-target.md). The existing escrow authorizes an EOA relayer, so [packages/relayer](../relayer/README.md) now implements that path with finalized source reads, durable SQLite cursor/receipt state, exact escrow reconciliation and reorg aborts. Direct CRE-to-Arc remains an alternative requiring an Arc receiver, not an implemented deployment. For the available EOA path:
 
@@ -30,7 +38,7 @@ Arc is supported; see [the capability finding](evidence/arc-write-target.md). Th
 - The escrow's authorized relayer must match the configured dedicated EOA key. Source authenticity depends on the authenticated Sepolia receiver/sink; the EOA is explicitly trusted, not a cross-chain proof.
 - Replay/out-of-order protection, exact agreement binding, and idempotent recovery must survive retries.
 - Transfers require the Arc principal's token balance and ERC-20 approval for the escrow. Arc native gas also needs funding; a USDC token balance does not prove gas readiness.
-- Sepolia acceptance and Arc locking are not atomic. Do not advance to a funded position until the Arc receipt succeeds. Operational relayer recovery is tested on local EVMs; public-testnet delivery is not yet claimed. No automatic source-registry settlement reconciliation is supplied by the relayer.
+- Sepolia acceptance and Arc locking are not atomic. The public agreement has passed validation and breach on Sepolia; Arc locking/unwind remain intentionally gated on finalized source evidence and confirmation-qualified destination receipts. No automatic source-registry settlement reconciliation is supplied by the relayer.
 
 ## Member C — public integration inputs
 
