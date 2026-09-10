@@ -9,3 +9,6 @@ coverage/
 !.env.example
 deployments/local.json
 deployments/*.generated.json
+packages/cre/.local/
+packages/position-feed/state/
+packages/relayer/state/

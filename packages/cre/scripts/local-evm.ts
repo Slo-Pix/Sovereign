@@ -10,8 +10,8 @@ import { createPublicClient, createWalletClient, defineChain, http, type Abi, ty
 import { assertLocalRpc } from './chain-guards'
 export { LOCAL_MODE } from './chain-guards'
 
-export const FOUNDRY_VERSION = '1.7.1'
 export const ROOT = resolve(import.meta.dir, '../../..')
+export const FOUNDRY_VERSION = 'system-installed'
 export type Artifact = { abi: Abi; bytecode: { object: Hex } }
 
 export function localClient(url: string, chainId: number) {
@@ -44,33 +44,35 @@ export async function withLocalEvm<T>(run: (context: {
   sepolia: LocalClient; arc: LocalClient; artifact: (name: string) => Promise<Artifact>
 }) => Promise<T>): Promise<T> {
   const directory = await mkdtemp(resolve(tmpdir(), 'sovereign-local-lifecycle-'))
-  const processes: { child: ChildProcess; closed: Promise<void> }[] = []
+  const processes: { child: ChildProcess; closed: Promise<number | null> }[] = []
   const controller = new AbortController()
   const interrupt = () => controller.abort()
   process.once('SIGINT', interrupt)
   process.once('SIGTERM', interrupt)
-  function launch(args: string[]) {
-    const child = spawn('bun', ['--no-env-file', 'x', '--bun', ...args], {
+  function launch(command: string, args: string[]) {
+    const child = spawn(command, args, {
       cwd: ROOT, env: childEnv(), stdio: 'ignore', detached: true,
     })
-    const closed = new Promise<void>(resolve => {
-      child.once('close', () => resolve())
-      child.once('error', () => resolve())
+    const closed = new Promise<number | null>(resolve => {
+      child.once('close', code => resolve(code))
+      child.once('error', () => resolve(null))
     })
     processes.push({ child, closed })
     return { child, closed }
   }
   try {
-    const build = launch([`@foundry-rs/forge@${FOUNDRY_VERSION}`, 'build', '--root', ROOT,
+    const forge = process.env.FOUNDRY_BIN || 'forge'
+    const anvil = process.env.ANVIL_BIN || 'anvil'
+    const build = launch(forge, ['build', '--root', ROOT,
       '--out', resolve(directory, 'out'), '--cache-path', resolve(directory, 'cache'),
       '--skip', 'test', 'script'])
     // MockUSDC is not a .t.sol file, so it remains in the compilation.
-    await Promise.race([build.closed, delay(180_000, undefined, { signal: controller.signal })
+    const buildCode = await Promise.race([build.closed, delay(180_000, undefined, { signal: controller.signal })
       .then(() => { throw new Error('Local contract compilation timed out') })])
-    assert.equal(build.child.exitCode, 0, 'Local contract compilation failed')
+    assert.equal(buildCode, 0, 'Local contract compilation failed')
     async function start(chainId: number) {
       const port = await freePort()
-      const { child } = launch([`@foundry-rs/anvil@${FOUNDRY_VERSION}`, '--host', '127.0.0.1', '--port', String(port),
+      const { child } = launch(anvil, ['--host', '127.0.0.1', '--port', String(port),
         '--chain-id', String(chainId), '--silent'])
       const client = localClient(`http://127.0.0.1:${port}`, chainId)
       const deadline = Date.now() + 30_000

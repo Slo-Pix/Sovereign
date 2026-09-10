@@ -130,3 +130,11 @@ These results validate the local implementation and synthetic/local integrations
 ## Final Readiness Assessment
 
 The three workflows are implemented to a strong local and synthetic-test level. Workflow 1 has the contract and escrow foundation, Workflow 2 has the confidential decision and transport machinery, and Workflow 3 has canonical agents and a privacy-corrected frontend. The remaining work is integration and deployment readiness, not another broad rewrite: confirm ownership, supply real public configuration and funded identities, deploy/wire the receiver, host the secured provider, create one real agreement, execute the complete path, and preserve truthful evidence.
+
+## Member 1 Operations Update: 2026-09-10
+
+- Added `packages/protocol-ops`, an owner-side read-only readiness check and a dry-run-first reconciliation command.
+- Reconciliation requires a finalized Sepolia breach receipt and a confirmation-qualified Arc full unwind receipt. It verifies exact event provenance, IDs, nonce, complete registry/escrow binding, full-capital return, canonical wiring, owner identity, pending nonce absence, and finality between writes.
+- Broadcast is explicit and sequential; restart from `UNWIND` is supported, while partial or discretionary settlement is rejected. Terminal `SETTLED` requires separate settlement event evidence.
+- Added 47 focused tests for policy, replay/stale nonce, malformed or duplicate evidence, reorg identity, binding mismatch, SAFE/validation misuse, partial return, and terminal-state handling.
+- No live write was performed by this change. Receiver deployment remains blocked until the approved CRE workflow ID, workflow owner, and report forwarder are supplied; the existing mock forwarder is not treated as DON approval. Arc agreement principal/capital funding also remains an operator prerequisite.
