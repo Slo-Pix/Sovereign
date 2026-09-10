@@ -1,0 +1,18 @@
+{
+  "schedule": "*/3 * * * * *",
+  "agreementId": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "agreementRegistry": "0x81134eF33D0C195c6c17610f40C5FF53afBD6AF4",
+  "intentRegistry": "0x2AB9B14995048f0A6e0A80830c2654a1d72f8deD",
+  "decisionSink": "0xFAf580b27CBE494adcE3F4D9F78caB42a6e3088D",
+  "policySecretId": "SOVEREIGN_POLICY",
+  "positionAuthSecretId": "SOVEREIGN_POSITION_AUTH",
+  "terms": {
+    "intentId": "0x0000000000000000000000000000000000000000000000000000000000000000",
+    "principal": "0x0000000000000000000000000000000000000000",
+    "counterparty": "0x0000000000000000000000000000000000000000",
+    "capital": "1", "duration": "1", "yieldBps": "1", "expiresAt": "1", "nonce": "1"
+  },
+  "positionOrigin": "https://positions.example.invalid",
+  "maxPositionAgeSeconds": 30,
+  "delivery": "report-only"
+}

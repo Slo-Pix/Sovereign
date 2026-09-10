@@ -1,0 +1,27 @@
+{
+  "name": "@sovereign/cre",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "bun test ./test",
+    "typecheck": "tsc --noEmit && tsc --noEmit -p scripts/tsconfig.json",
+    "build": "cre-compile sovereign/main.ts sovereign/workflow.wasm",
+    "demo": "bun scripts/demo.ts",
+    "demo:feed": "bun scripts/feed-demo.ts",
+    "demo:provider": "bun --no-env-file scripts/provider-demo.ts",
+    "demo:chain": "bun --no-env-file scripts/demo-chain.ts",
+    "test:chain": "bun --no-env-file test ./test/local-lifecycle.test.ts",
+    "check:receiver": "bun --no-env-file scripts/check-receiver.ts",
+    "preflight": "bun scripts/preflight.ts"
+  },
+  "dependencies": {
+    "@chainlink/cre-sdk": "1.18.0",
+    "viem": "2.34.0",
+    "zod": "3.25.76"
+  },
+  "devDependencies": {
+    "@types/bun": "1.3.10",
+    "typescript": "5.9.3"
+  }
+}

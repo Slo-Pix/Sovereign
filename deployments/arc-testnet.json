@@ -1,0 +1,19 @@
+{
+  "network": "Arc Testnet",
+  "chainId": 5042002,
+  "deployer": "0x335E58172fC8895Bc380471972A22Ea921152F6d",
+  "relayer": "0x7B20767D2d22326D3a8EfFAd781Ea8557BC7A8E0",
+  "usdc": "0x3600000000000000000000000000000000000000",
+  "contracts": {
+    "sovereignEscrow": {
+      "address": "0xB8d02CAcaa506ddE0734E8ce1EDb1441ef372b3c",
+      "deploymentTx": "0x2da31eaea757f4db62119cf801e1e2b3f5a6d862f963578b4d00bc024da5a185",
+      "verified": true,
+      "verification": "Sourcify exact_match",
+      "verificationJob": "d4375e5c-9d83-471a-8a80-ada9ca5265c6",
+      "verificationUrl": "https://sourcify.dev/server/v2/verify/d4375e5c-9d83-471a-8a80-ada9ca5265c6",
+      "explorerUrl": "https://testnet.arcscan.app/address/0xb8d02cacaa506dde0734e8ce1edb1441ef372b3c"
+    }
+  },
+  "wiringVerifiedAt": "2026-09-08"
+}

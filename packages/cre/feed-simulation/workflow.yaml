@@ -1,0 +1,7 @@
+staging-settings:
+  user-workflow:
+    workflow-name: sovereign-private-feed-simulation-only
+  workflow-artifacts:
+    workflow-path: ./main.ts
+    config-path: ../.local/feed-demo.config.json
+    secrets-path: ./secrets.yaml

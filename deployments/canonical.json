@@ -1,0 +1,20 @@
+{
+  "generatedAt": "2026-09-08",
+  "sepolia": {
+    "chainId": 11155111,
+    "intentRegistry": "0x2AB9B14995048f0A6e0A80830c2654a1d72f8deD",
+    "agreementRegistry": "0x81134eF33D0C195c6c17610f40C5FF53afBD6AF4",
+    "decisionSink": "0xFAf580b27CBE494adcE3F4D9F78caB42a6e3088D",
+    "creForwarder": "0x15fC6ae953E024d975e77382eEeC56A9101f9F88",
+    "verified": true,
+    "explorer": "https://sepolia.etherscan.io"
+  },
+  "arcTestnet": {
+    "chainId": 5042002,
+    "sovereignEscrow": "0xB8d02CAcaa506ddE0734E8ce1EDb1441ef372b3c",
+    "usdc": "0x3600000000000000000000000000000000000000",
+    "relayer": "0x7B20767D2d22326D3a8EfFAd781Ea8557BC7A8E0",
+    "verified": true,
+    "explorer": "https://testnet.arcscan.app"
+  }
+}

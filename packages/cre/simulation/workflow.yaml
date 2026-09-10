@@ -1,0 +1,7 @@
+staging-settings:
+  user-workflow:
+    workflow-name: sovereign-synthetic-simulation-only
+  workflow-artifacts:
+    workflow-path: ./main.ts
+    config-path: ../.local/demo.config.json
+    secrets-path: ./secrets.yaml

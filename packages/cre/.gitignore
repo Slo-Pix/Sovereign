@@ -1,0 +1,10 @@
+*.env
+.env
+.env.*
+!.env.example
+node_modules/
+dist/
+*.wasm
+.cre_build_tmp*
+.local/
+sovereign/workflow.js

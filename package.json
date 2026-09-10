@@ -1,0 +1,18 @@
+{
+  "name": "sovereign",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build:contracts": "forge build",
+    "test:contracts": "forge test",
+    "fmt:contracts": "forge fmt",
+    "export:abis": "bash scripts/export-abis.sh",
+    "test:core": "npm --workspace @sovereign/core test"
+  },
+  "devDependencies": {
+    "@types/node": "^26.5.0"
+  }
+}

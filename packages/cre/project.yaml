@@ -1,0 +1,6 @@
+# Sovereign testnet workflows. No mainnet or approved production deployment is configured.
+# Live-chain workflow reads Sepolia; writes additionally require a verified report receiver.
+staging-settings:
+  rpcs:
+    - chain-name: ethereum-testnet-sepolia
+      url: https://ethereum-sepolia-rpc.publicnode.com

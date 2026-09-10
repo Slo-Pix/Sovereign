@@ -1,0 +1,27 @@
+{
+  "network": "Ethereum Sepolia",
+  "chainId": 11155111,
+  "deployer": "0x335E58172fC8895Bc380471972A22Ea921152F6d",
+  "creForwarder": "0x15fC6ae953E024d975e77382eEeC56A9101f9F88",
+  "contracts": {
+    "intentRegistry": {
+      "address": "0x2AB9B14995048f0A6e0A80830c2654a1d72f8deD",
+      "deploymentTx": "0xb9a4dd22a0c987747f163bef2f2c0ce5f62645f0f6a47ddc3eab0681f5f4b215",
+      "verified": true,
+      "explorerUrl": "https://sepolia.etherscan.io/address/0x2ab9b14995048f0a6e0a80830c2654a1d72f8ded"
+    },
+    "agreementRegistry": {
+      "address": "0x81134eF33D0C195c6c17610f40C5FF53afBD6AF4",
+      "deploymentTx": "0xe5220daed1ddad21069258eb6444780113185f38ef5934a03424f66384641ff3",
+      "verified": true,
+      "explorerUrl": "https://sepolia.etherscan.io/address/0x81134ef33d0c195c6c17610f40c5ff53afbd6af4"
+    },
+    "decisionSink": {
+      "address": "0xFAf580b27CBE494adcE3F4D9F78caB42a6e3088D",
+      "deploymentTx": "0x214f2ac5c6b38954741d4a42de7e3de5866e9a72478b1f75c99ee4418c76d1fa",
+      "verified": true,
+      "explorerUrl": "https://sepolia.etherscan.io/address/0xfaf580b27cbe494adce3f4d9f78cab42a6e3088d"
+    }
+  },
+  "wiringVerifiedAt": "2026-09-08"
+}

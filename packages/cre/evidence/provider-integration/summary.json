@@ -1,0 +1,92 @@
+{
+  "command": "bun --no-env-file packages/cre/scripts/provider-demo.ts",
+  "evidenceMode": "REAL_PROVIDER_REAL_CRE_HTTP_SYNTHETIC_STATE_NOT_TEE_NOT_LIVE_CHAIN",
+  "completedAt": "2026-09-09T21:59:28.816Z",
+  "totalReports": 1,
+  "creSimulations": 3,
+  "provisionCommands": 1,
+  "revokeCommands": 1,
+  "serverStarts": 4,
+  "serverRestarts": 3,
+  "cleanupSucceeded": true,
+  "cliStartupRpc": {
+    "kind": "LOOPBACK_CHAIN_ID_STUB_NOT_AN_EVM",
+    "methods": [
+      "eth_chainId",
+      "eth_chainId",
+      "eth_chainId"
+    ]
+  },
+  "revokedCredentialSurvivedRestart": true,
+  "sourceSha256": {
+    "feed-simulation/main.ts": "c27558baed82fd78a5500a882daea49271797a8365ec69e7beb255076522f1bb",
+    "src/position.ts": "4d95f9db31a0622b2d0e539be112800aa874c7c8bd7047e493fbda6660b60264",
+    "position-feed/src/server.ts": "1b4a5c6b325e7ff81f028c0dfdbc53aed4a3beced1beee135e248244821728c2",
+    "position-feed/src/operator.ts": "b88cc9b28db8a297f1290b6dc035ae894344be4dad0115c64229a6f2a6d219bb",
+    "position-feed/src/http.ts": "e76c7dcc30a80817b29ece598f446e845eb4c6e561a4af21ce71f438d8e7b48f",
+    "position-feed/src/store.ts": "e22b49c8ee7deaf1ea01b745edb757836467eb1372408bf099a3bc360a441794",
+    "position-feed/src/validation.ts": "cafb55a2b5f40264107ee0cada67efa37d14182f27793267638d764fd560e98c"
+  },
+  "scenarios": [
+    {
+      "scenario": "safe",
+      "reportsGenerated": 0,
+      "observationTimestamp": 1788991138,
+      "evaluationTimeSeconds": 1788991138,
+      "hostStart": 1788991139,
+      "hostEnd": 1788991149,
+      "ageAtCompletionSeconds": 11,
+      "authorizedCREReads": 1,
+      "readerGetStatus": 200,
+      "readerPutStatus": 401,
+      "writerGetStatus": 401,
+      "anonymousGetStatus": 401,
+      "anonymousPutStatus": 401,
+      "writerPutStatus": 204,
+      "replayPutStatus": 409,
+      "persistedObservationUnchanged": true,
+      "previousObservationSurvivedRestart": false,
+      "privacyScanPassed": true
+    },
+    {
+      "scenario": "breach",
+      "reportsGenerated": 1,
+      "observationTimestamp": 1788991149,
+      "evaluationTimeSeconds": 1788991149,
+      "hostStart": 1788991149,
+      "hostEnd": 1788991158,
+      "ageAtCompletionSeconds": 9,
+      "authorizedCREReads": 1,
+      "readerGetStatus": 200,
+      "readerPutStatus": 401,
+      "writerGetStatus": 401,
+      "anonymousGetStatus": 401,
+      "anonymousPutStatus": 401,
+      "writerPutStatus": 204,
+      "replayPutStatus": 409,
+      "persistedObservationUnchanged": true,
+      "previousObservationSurvivedRestart": true,
+      "privacyScanPassed": true
+    },
+    {
+      "scenario": "revoked",
+      "reportsGenerated": 0,
+      "observationTimestamp": 1788991158,
+      "evaluationTimeSeconds": 1788991158,
+      "hostStart": 1788991158,
+      "hostEnd": 1788991168,
+      "ageAtCompletionSeconds": 10,
+      "authorizedCREReads": 0,
+      "readerGetStatus": 401,
+      "readerPutStatus": 401,
+      "writerGetStatus": 401,
+      "anonymousGetStatus": 401,
+      "anonymousPutStatus": 401,
+      "writerPutStatus": 204,
+      "replayPutStatus": 409,
+      "persistedObservationUnchanged": true,
+      "previousObservationSurvivedRestart": true,
+      "privacyScanPassed": true
+    }
+  ]
+}

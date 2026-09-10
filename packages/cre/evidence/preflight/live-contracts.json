@@ -1,0 +1,23 @@
+{
+  "evidenceMode": "LIVE_RPC_READS_ONLY_NO_TRANSACTIONS",
+  "checkedAt": "2026-09-09T20:25:13.961Z",
+  "sepolia": {
+    "chainId": 11155111,
+    "decisionSink": "0xFAf580b27CBE494adcE3F4D9F78caB42a6e3088D",
+    "hasBytecode": true,
+    "configuredForwarder": "0x15fC6ae953E024d975e77382eEeC56A9101f9F88"
+  },
+  "arc": {
+    "chainId": 5042002,
+    "escrow": "0xB8d02CAcaa506ddE0734E8ce1EDb1441ef372b3c",
+    "hasBytecode": true,
+    "configuredRelayer": "0x7B20767D2d22326D3a8EfFAd781Ea8557BC7A8E0",
+    "token": "0x3600000000000000000000000000000000000000"
+  },
+  "limitations": [
+    "No agreement lifecycle tested",
+    "No transaction broadcast",
+    "Wallet funding not checked",
+    "Current contract ABIs do not expose onReport; receiver integration required"
+  ]
+}

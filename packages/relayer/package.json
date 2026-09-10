@@ -1,0 +1,14 @@
+{
+  "name": "@sovereign/relayer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": "./src/index.ts",
+  "scripts": {
+    "relay": "bun --no-env-file src/cli.ts --once",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": { "viem": "2.34.0" },
+  "devDependencies": { "@types/bun": "1.3.10", "typescript": "5.9.3" }
+}

@@ -1,0 +1,38 @@
+SYNTHETIC-STATE CRE CLI SIMULATION. NOT HARDWARE TEE OR CHAIN-WRITE EVIDENCE.
+Scenario: breach
+✓ Workflow compiled
+✓ Simulation limits enabled
+  HTTP: req=120kb resp=250kb timeout=10s | ConfHTTP: req=125kb resp=500kb timeout=1m30s | Consensus obs=25kb | ChainWrite evm_report=50kb evm_gas=10000000 solana_report=265b solana_cu=300000 | WASM binary=100mb compressed=20mb
+  Binary hash: 14b3bfb7d0d2404ce2a5f6f2cefba52903d74fe4f2935bef3841d4e6869b6b17
+  Config hash: 9f4afc2dd881d261a41a240119c67f9e41ef425179ec448a997680354648289e
+2026-09-10T01:53:14Z [SIMULATION] Simulator Initialized
+
+2026-09-10T01:53:14Z [SIMULATION] Running trigger trigger=cron-trigger@1.0.0
+╭────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│ Trigger requested TEE Execution your trigger will run in one of the following Tees:                │
+│     - AWS Nitro in us-west-2                                                                       │
+│ The simulator is not a real TEE, and is meant to debug.                                            │
+│ Do not use it for sensitive information.                                                           │
+│ During real execution, user logs for this trigger will not be visible, and will not leave the TEE. │
+│ They are presented in the simulator for debugging only.                                            │
+│                                                                                                    │
+╰────────────────────────────────────────────────────────────────────────────────────────────────────╯
+
+
+✓ Workflow Simulation Result:
+"{\"evidenceMode\":\"SIMULATION_SYNTHETIC_STATE_NOT_A_TEE\",\"scenario\":\"breach\",\"reportsGenerated\":1,\"decision\":{\"agreementId\":\"0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"decisionId\":\"0x27c1f86ee3536bb221e592432902afe9ad69450bf6adabd7d88aba0153dafcd5\",\"checkKind\":2,\"result\":true,\"decisionNonce\":\"2\",\"delivery\":\"report-only\"}}"
+
+2026-09-10T01:53:14Z [SIMULATION] Execution finished signal received
+2026-09-10T01:53:14Z [SIMULATION] Skipping WorkflowEngineV2
+
+╭──────────────────────────────────────────────────────╮
+│ Simulation complete! Ready to deploy your workflow?  │
+│                                                      │
+│ Run cre account access to request deployment access. │
+╰──────────────────────────────────────────────────────╯
+
+Initializing...
+Loading settings...
+! Using default private key for chain write simulation. To use your own key, set CRE_ETH_PRIVATE_KEY in your .env file or system environment.
+Checking RPC connectivity...
+Compiling workflow...

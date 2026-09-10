@@ -1,0 +1,46 @@
+{
+  "kind": "IMPLEMENTATION_VALIDATION_NOTE_NOT_DRIVER_GENERATED",
+  "scope": "New provider-demo driver and provider-integration evidence only",
+  "typecheck": {
+    "command": "bun --no-env-file packages/cre/node_modules/typescript/bin/tsc --noEmit -p packages/cre/scripts/tsconfig.json",
+    "passed": true
+  },
+  "repeatability": {
+    "command": "bun --no-env-file packages/cre/scripts/provider-demo.ts",
+    "completeSuccessfulRuns": 2,
+    "reportsPerRun": [0, 1, 0],
+    "latestCompletionAgesSeconds": [9, 9, 10],
+    "latestRunArtifact": "summary.json"
+  },
+  "injectedCliFailure": {
+    "command": "CRE_BIN=/bin/false bun --no-env-file packages/cre/scripts/provider-demo.ts",
+    "method": "Invoked through a Bun wrapper that captured output and compared temp-directory listings and success evidence before/after",
+    "exitCode": 1,
+    "failureStage": "safe:actual-cre-http",
+    "privateTemporaryTreeRemoved": true,
+    "previousSuccessEvidenceUnchanged": true,
+    "rawDiagnosticsPrinted": false
+  },
+  "interruptedCompilation": {
+    "command": "bun --no-env-file packages/cre/scripts/provider-demo.ts",
+    "method": "Bun wrapper waited for the isolated CRE compiler JS artifact with a bounded 15-second readiness loop, then sent SIGTERM to the driver",
+    "exitCode": 1,
+    "failureStage": "safe:actual-cre-http",
+    "privateTemporaryTreeRemoved": true,
+    "previousSuccessEvidenceUnchanged": true
+  },
+  "independentFinalAudit": {
+    "temporaryDirectoryPrefix": "sovereign-provider-integration-",
+    "remainingPrivateDirectories": 0,
+    "remainingProviderOrTemporaryCompilerProcesses": 0,
+    "sourceHashesMatchLatestEvidence": true,
+    "reportCountsMatchLatestEvidence": true
+  },
+  "limitations": [
+    "Synthetic policy, observations and agreement snapshot; not live venue or chain state",
+    "Actual position service and actual CRE HTTP capability; not a hardware TEE",
+    "Loopback chain-ID metadata stub supports only the mandatory CLI startup check",
+    "No broadcast, deployment, remote RPC, remote Git write or commit performed",
+    "These additional cleanup checks were run during implementation, not automatically by every driver invocation"
+  ]
+}

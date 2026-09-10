@@ -1,0 +1,24 @@
+{
+  "policy": {
+    "minYieldBps": "800",
+    "maxLossBps": "300",
+    "maxDuration": "2592000",
+    "salt": "0x1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "policyCommitment": "0x1915bf97fe0c977a0b489c3d45f36350c8d8615322efeb520b4c4141b65c9a52",
+  "terms": {
+    "intentId": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "principal": "0x1111111111111111111111111111111111111111",
+    "counterparty": "0x2222222222222222222222222222222222222222",
+    "capital": "100000000000",
+    "duration": "1814400",
+    "yieldBps": "880",
+    "expiresAt": "1800000000",
+    "nonce": "1"
+  },
+  "termsHash": "0x6e6cb528d3b35f064aa6bd7846569e3d1b33cda81eb113fd1a21e727dca9c7b0",
+  "offer": {
+    "verifyingContract": "0x3333333333333333333333333333333333333333",
+    "digest": "0x0890a54fa64c65f18c55c6352e0a93200f9f06fe586b170a8477ea6a112eb7c4"
+  }
+}

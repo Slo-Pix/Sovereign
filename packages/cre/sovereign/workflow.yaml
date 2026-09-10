@@ -1,0 +1,7 @@
+staging-settings:
+  user-workflow:
+    workflow-name: sovereign-decisions-staging
+  workflow-artifacts:
+    workflow-path: ./main.ts
+    config-path: ../.local/sovereign.config.json
+    secrets-path: ./secrets.yaml
