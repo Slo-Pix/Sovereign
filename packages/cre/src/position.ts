@@ -15,7 +15,7 @@ const credentialSchema = z.object({
 export function readPrivatePosition(runtime: TeeRuntime<Config>): Position | undefined {
   try {
     const config = runtime.config
-    if (config.allowInsecurePositionLoopback && config.delivery !== 'report-only') return undefined
+    if (config.allowInsecurePositionLoopback && config.delivery !== 'report-only' && config.delivery !== 'simulation-sepolia') return undefined
     const url = positionEndpoint(config.positionOrigin, config.agreementId, config.allowInsecurePositionLoopback)
     if (!url || !config.positionAuthSecretId || config.positionAuthSecretId === config.policySecretId) return undefined
     const raw = runtime.getSecret({ id: config.positionAuthSecretId }).result().value

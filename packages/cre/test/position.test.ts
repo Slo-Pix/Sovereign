@@ -55,10 +55,11 @@ describe('endpoint binding', () => {
       expect(configSchema.safeParse({ ...example, positionOrigin: origin }).success).toBe(false)
     }
   })
-  test('loopback is explicit simulation-only and rejects Sepolia delivery', () => {
+  test('loopback is explicit simulation-only and rejects production Sepolia delivery', () => {
     const config = { ...example, positionOrigin: 'http://127.0.0.1:3001', allowInsecurePositionLoopback: true }
     expect(configSchema.safeParse(config).success).toBe(true)
     expect(configSchema.safeParse({ ...config, delivery: 'sepolia', reportReceiver: `0x${'44'.repeat(20)}` }).success).toBe(false)
+    expect(configSchema.safeParse({ ...config, delivery: 'simulation-sepolia', reportReceiver: `0x${'44'.repeat(20)}` }).success).toBe(true)
     expect(configSchema.safeParse({ ...config, positionOrigin: 'http://localhost:3001' }).success).toBe(false)
   })
   test('public config takes only a separate credential secret ID', () => {

@@ -6,7 +6,10 @@
     "test": "bun --no-env-file test test",
     "typecheck": "tsc --noEmit",
     "readiness": "bun --no-env-file src/readiness.ts",
-    "reconcile": "bun --no-env-file src/reconcile.ts"
+    "reconcile": "bun --no-env-file src/reconcile.ts",
+    "bootstrap-demo": "bun --no-env-file src/bootstrap-demo.ts",
+    "provision-feed": "bun --no-env-file src/provision-feed.ts",
+    "freeze-config": "bun --no-env-file src/freeze-config.ts"
   },
   "dependencies": { "viem": "2.34.0" },
   "devDependencies": { "@types/bun": "1.3.10", "typescript": "5.9.3" }

@@ -60,7 +60,7 @@ test('missing feed emits no decision, never SAFE', () => {
   expect(publicRequests).toEqual([])
 })
 test('SAFE and exact-boundary monitoring never publish or expose a verdict in either delivery mode', () => {
-  for (const delivery of ['report-only', 'sepolia'] as const) {
+  for (const delivery of ['report-only', 'simulation-sepolia', 'sepolia'] as const) {
     for (const currentLossBps of [180, 210, 250, 280, 300]) {
       const { runtime, ports, snapshot, publicRequests, logs } = harness()
       runtime.config.delivery = delivery

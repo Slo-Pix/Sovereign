@@ -15,12 +15,14 @@ export const configSchema = z.object({
   positionOrigin: z.string().max(280),
   allowInsecurePositionLoopback: z.boolean().default(false),
   maxPositionAgeSeconds: z.number().int().positive().max(300).default(30),
-  delivery: z.enum(['report-only', 'sepolia']).default('report-only'),
+  // simulation-sepolia is explicit: it may use loopback feed input while still
+  // broadcasting real Sepolia transactions through the tenant mock forwarder.
+  delivery: z.enum(['report-only', 'simulation-sepolia', 'sepolia']).default('report-only'),
   // An onReport receiver, NOT the current DecisionSink. Configure only after Member A deploys it.
   reportReceiver: address.optional(),
 }).strict().superRefine((config, ctx) => {
   if (!isPositionOrigin(config.positionOrigin, config.allowInsecurePositionLoopback) ||
-      (config.allowInsecurePositionLoopback && config.delivery !== 'report-only')) {
+      (config.allowInsecurePositionLoopback && config.delivery !== 'report-only' && config.delivery !== 'simulation-sepolia')) {
     ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Invalid position origin or insecure delivery mode' })
   }
   if (config.positionAuthSecretId === config.policySecretId) {

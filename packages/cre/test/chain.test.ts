@@ -11,7 +11,7 @@ import { configSchema, type Config } from '../src/config'
 import { chainPorts } from '../src/chain'
 import { deriveDecisionId } from '../src/domain'
 
-function setup(delivery: 'report-only' | 'sepolia' = 'report-only') {
+function setup(delivery: 'report-only' | 'simulation-sepolia' | 'sepolia' = 'report-only') {
   const config = configSchema.parse({ ...example, agreementId: `0x${'bb'.repeat(32)}`,
     terms: vectors.terms, delivery, reportReceiver: `0x${'44'.repeat(20)}` })
   const don = newTestRuntime(null, undefined, config)
@@ -85,7 +85,7 @@ test('SDK report delivery targets the configured receiver and checks receipt sta
 })
 
 test('transport rejects SAFE before report generation or chain write in either delivery mode', () => {
-  for (const delivery of ['report-only', 'sepolia'] as const) {
+  for (const delivery of ['report-only', 'simulation-sepolia', 'sepolia'] as const) {
     const { config, runtime, evm, don } = setup(delivery)
     let reports = 0
     let writes = 0
