@@ -1,97 +1,34 @@
-# Sovereign: Three-Workflow Status Report
+# Sovereign: Outstanding Work
 
 **Snapshot:** 2026-09-11  
 **Repository:** `Slo-Pix/Sovereign-WF2`  
-**Status:** The complete two-chain rehearsal is finished and verified on public testnets. One agreement ran end to end from validation through breach, Arc unwind, and owner reconciliation; Sepolia reports `SETTLED` and Arc reports `UNWOUND`. Remaining work is explorer verification, hosted HTTPS provider operations, and optional approved DON deployment.
+**Scope:** This document lists only what is still outstanding. Completed implementation and the verified public-testnet rehearsal evidence live in `deployments/canonical.json`, `packages/cre/INTEGRATION.md`, and the repository history.
 
-## Executive Summary
-
-Sovereign is organized into three connected workflows:
+## Workflow Map
 
 1. **Workflow 1:** contracts, canonical encoding, registries, decision sink, and Arc escrow.
 2. **Workflow 2:** confidential CRE evaluation, decision delivery, private position-feed consumption, and Sepolia-to-Arc relaying.
 3. **Workflow 3:** agent negotiation, canonical offer signing, position simulation/provider operations, and the frontend.
 
-The local implementation includes the core lifecycle, confidential decision logic, authenticated simulated position service, trusted relayer, agent signing fixes, and public-state frontend updates. The full path has now been executed once on public testnets through the mock-forwarder simulation route. The remaining work is explorer verification, hosted HTTPS provider operations, and optional approved DON deployment.
-
-## Work Completed
-
-### Workflow 1: Contracts and Settlement
-
-- Implemented and tested the IntentRegistry, AgreementRegistry, DecisionSink, and SovereignEscrow lifecycle.
-- Frozen and shared canonical policy, terms, and EIP-712 offer encoding through `packages/core` and fixture vectors.
-- Added salted policy commitments so private thresholds are not brute-forceable from small public values.
-- Added decision nonce and state guards, forwarder authorization, replay protection, and terminal-state protection.
-- Added the CRE decision receiver source, deployment script, tests, and matching ABI artifacts.
-- Corrected the checked-in DecisionSink ABI error name and verified receiver ABI parity against compiled output.
-- Added local two-chain lifecycle validation covering acceptance, activation, lock, breach, unwind, replay rejection, migration, and token conservation.
-- Local lifecycle result included 43 mined transactions, including intentional negative reverts, with balances moving from unfunded to locked and back to fully unwound.
-
-### Workflow 2: Confidential Compute and Bridge
-
-- Completed the CRE toolchain spike with CLI simulation, `handlerInTee` registrations, Nitro-region configuration, and secret retrieval inside the simulated enclave.
-- Implemented confidential offer validation: policy commitment verification, terms validation, state guards, expiry checks, and ACCEPT/REJECT decisions.
-- Implemented confidential breach monitoring: commitment verification, loss and duration checks, boundary handling, stale/future/malformed feed rejection, and SAFE/BREACHED decisions.
-- Enforced breach-only publication: SAFE decisions are suppressed before report generation and do not consume a public decision nonce.
-- Added report generation and receiver-status checks requiring both transaction success and receiver execution success.
-- Added authenticated private position-feed consumption with TEE-only bearer credentials, agreement/origin binding, HTTPS-by-default validation, bounded requests, no caching, sanitized failures, and no automatic retries.
-- Added the `position-feed` service with SQLite durability, scoped read/write tokens, offline provisioning, rotation/revocation, quotas, replay protection, freshness checks, bounded bodies, and protected local state.
-- Added the `relayer` package for finalized Sepolia DecisionRecorded events to Arc lock/unwind actions, with dry-run default, explicit broadcast, durable cursors, reorg checks, receipt proofs, restart recovery, and single-writer locking.
-- Added provider-to-CRE interoperability tests, local two-Anvil relayer integration tests, CLI decision simulations, HTTP security probes, and local lifecycle evidence.
-- Documented the limits of simulation: it is not proof of hardware TEE execution, DON deployment, deployed receiver identity, or public-chain delivery.
-- ENS integration remains unimplemented as an authoritative authorization path.
-
-### Workflow 3: Agents, Provider Operations, and Frontend
-
-- Updated agent signing to use the shared seven-field canonical offer schema and digest instead of the incompatible five-field schema.
-- Kept the signed proposer address separate from unsigned negotiation metadata such as proposerRole.
-- Added intent, principal, and counterparty binding requirements and preserved complete final terms, expiry, and offer nonce.
-- Corrected breach boolean polarity so `true` means BREACHED and `false` means SAFE.
-- Added tests for canonical vectors, binding, signature mutation, negotiation behavior, and strategy/treasury agents.
-- Marked fixture pages as synthetic/demo data and removed unsupported ZK, SGX, TEE, proof-root, and private SAFE-history claims.
-- Added explicit injected-wallet account connection. The UI does not currently sign offers, submit intents, approve tokens, or send protocol transactions.
-- Added a read-only public monitoring API that queries finalized Sepolia/Arc state, allowlists public fields, sanitizes provider errors, and never falls back to mock data on RPC failure.
-- Added frontend and agent documentation describing public/private boundaries, server-only RPC configuration, and the absence of private position data in the browser.
-- Validated frontend typechecking, Node 22 production build, lint, public API tests, and agent tests.
-
 ## Remaining Work
 
 ### Workflow 1 Remaining
-
-**Open**
 
 - Complete explorer verification for the deployed receiver and retain the ABI revision, wiring transactions, and receipts. Confirm `evmVersion` from the compiled artifact metadata rather than assuming a default, because `foundry.toml` does not pin `evm_version`.
 - Review and approve the shared ABI, privacy, frontend, and cross-team changes.
 - Decide whether ENS authorization is retained. If retained, add and deploy a real registry authorization hook; a displayed ENS name alone is not permission enforcement.
 
-**Closed since the previous snapshot**
-
-- Deployment identities reviewed and recorded in `deployments/canonical.json`, including the distinction between the simulator metadata identity and the config-derived workflow hash.
-- Owner-authorized registry reconciliation implemented in `packages/protocol-ops` and executed: `markUnwinding` and `markSettled` both broadcast against evidence gates.
-- Arc escrow token, authorized relayer, gas balance, USDC balance, and allowance confirmed against the live escrow; capital returned in full after unwind.
-
 ### Workflow 2 Remaining
 
-**Open**
-
 - Provision the hosted HTTPS position-feed origin and scoped read credential privately. Keep the writer credential outside CRE. Required only for a DON run; the completed rehearsal used a loopback feed reachable by the local simulator.
-- Review and package the local CRE, provider, and relayer changes with the other members; separate approved source from local evidence, databases, generated output, secrets, and assistant tooling.
+- Final cleanup pass once all members have finished: untrack assistant tooling (`.agents/`, `.claude/`, `skills-lock.json`) and decide which of `packages/cre/evidence/` stays as published documentation. Deliberately deferred so nobody loses working files mid-effort. The audit is done: no databases, generated output, or secret values are tracked, and the three `secrets.yaml` files contain only secret-name references.
 - Implement ENS only if the team keeps it in scope and Workflow 1 supplies the authoritative hook.
-
-**Closed since the previous snapshot**
-
-- Execution mode chosen and documented: reproducible CLI simulation with mock-forwarder broadcast. Approved confidential DON deployment remains a separate, access-gated path.
-- Frozen agreement ID, public terms, contract addresses, policy commitment, receiver identity, and decision nonce evidence preserved.
-- Relayer configured, dry-run, and broadcast. Arc lock and unwind both executed against finalized Sepolia evidence with receipts verified.
-- One continuous evidence set captured across both chains; see the verified rehearsal section below.
 
 **Operational note on RPC selection**
 
 The relayer requires `eth_getLogs` ranges wider than ten blocks and uses `retryCount: 0`. Free-tier Alchemy endpoints cap `eth_getLogs` at a ten-block range and can exceed the client timeout on a cold connection, which surfaces as the generic non-checkpointed failure message rather than a specific error. Use endpoints without that cap, keep `DESTINATION_START_BLOCK` close to the destination head, and wrap `main()` when a specific diagnostic is needed.
 
 ### Workflow 3 Remaining
-
-**Open**
 
 - Review and accept the updated agent contract and canonical signing changes.
 - Decide between a scripted operator-driven demo and a fully interactive browser flow.
@@ -102,94 +39,35 @@ The relayer requires `eth_getLogs` ranges wider than ten blocks and uses `retryC
 - Show funded, locked, breached, unwound, and settled states only after the corresponding destination receipts/events and agreed reconciliation succeed.
 - Complete mobile/desktop UX checks, wallet failure states, unavailable-RPC states, dependency review, and cleanup of remaining nonblocking build/lint warnings.
 
-**Closed since the previous snapshot**
+## Outstanding Integration Gates
 
-- Negotiation connected to a real Workflow 1 intent on Sepolia using the canonical chain/domain and the actual verifying contract.
-- A valid final agreement was submitted, and its ID and public terms were supplied to Workflow 2.
+The gates from the full rehearsal checklist that are not yet closed:
 
-## Shared Integration Gates
+1. Approved code and ownership review, including the cross-team Workflow 3 changes.
+2. Authenticated position observations served from a hosted HTTPS origin. The completed run used an authenticated loopback origin, which a DON cannot reach.
+3. Restart and recovery rehearsal against the public run. Currently proven only in local integration tests.
 
-These gates define a complete controlled rehearsal. Status reflects the 2026-09-11 run, verified against public RPC:
+## Optional: Approved DON Deployment
 
-1. Approved code and ownership review, including the cross-team Workflow 3 changes. **Open.**
-2. Real public identities, funded accounts, correct chains, correct forwarder, and receiver wiring. **Met.**
-3. One real agreement created from a fresh private policy and canonical signed offer. **Met.**
-4. Authenticated position observations consumed by the selected CRE execution mode. **Met for the simulation route over an authenticated loopback origin; hosted HTTPS remains required for a DON run.**
-5. A receiver-accepted validation decision that activates the agreement. **Met.**
-6. Finalized Sepolia evidence relayed to Arc and verified by escrow state and receipts. **Met.**
-7. SAFE observations produce no public decision; a fresh adverse observation produces BREACHED and unwinds escrow. **Met.**
-8. Restart/recovery rehearsal proves no duplicate relayer action. **Met in local integration tests; not separately rehearsed against the public run.**
-9. Public evidence clearly separates simulation, local EVM, public RPC, and actual testnet results. **Met.**
+Not required for the current demo path and gated on Chainlink approval.
 
-## Validation Summary
+- Obtain deployment access for the organization, then link an owner key.
+- Fund that owner, create the production configuration, and provision secrets through the CRE secret-management flow.
+- Point the configuration at the hosted HTTPS feed.
+- Deploy and activate the workflow, then record the resulting workflow ID.
+- Redeploy `CREDecisionReceiver` bound to the real DON forwarder, workflow ID, and workflow owner. The existing receiver is bound to the simulator's fixed metadata identity and must not be reused.
+- Have the DecisionSink owner call `setForwarder` on the new receiver, run the preflight, and execute one validation and breach rehearsal.
 
-- Solidity: 40 tests passed, including fuzz/invariant coverage and formatting.
-- Core: 3 tests and build passed.
-- Agents: 78 tests and typecheck passed.
-- Frontend: 82 tests total, typecheck and Node 22 production build passed; lint has two custom-font warnings and no errors.
-- CRE: 43 tests with 336 assertions, typecheck, build, WASM, and local lifecycle checks passed.
-- Position feed: 37 tests with 364 assertions and typecheck passed.
-- Relayer: 86 default tests with 231 assertions, typecheck, and opt-in local EVM integration passed.
-- Additional CLI decision, authenticated HTTP, provider interoperability, replay, revocation, restart, and privacy probes passed.
+## Standing Constraints
 
-These results validate the local implementation and synthetic/local integrations. They are now accompanied by one real public-testnet run with actual deployment identities, funded accounts, receiver delivery, relayer broadcast, and public receipts; see the verified rehearsal section. Hosted HTTPS provider operations remain outstanding for a DON-grade run.
+These are not tasks, but they bound every claim made about the system.
 
-## Security and Privacy Status
-
-- No real secret values were included in this report or the migrated repository.
-- Local environment files, tokens, databases, generated bundles, and private policy values remain excluded from the publishable code path.
-- The public surface intentionally exposes only public IDs, chain IDs, block numbers, and on-chain states.
-- The system does not claim exact threshold secrecy: timing, repeated observations, public inputs, absence of decisions, and validation behavior can create residual inference.
-- The CRE binary is visible to the DON; only confidential input data and derived private policy values are intended to remain inside the enclave.
 - The relayer is a trusted EOA transport, not a trustless bridge. Finality delays, reorg handling, non-atomicity, and operator key custody remain operational risks.
+- The CRE binary is visible to the DON; only confidential input data and derived private policy values stay inside the enclave.
+- Exact threshold secrecy is not claimed. Timing, repeated observations, public inputs, the absence of decisions, and validation behavior can create residual inference.
+- Mock-forwarder execution is real public-testnet execution, but it is not DON consensus and not hardware TEE attestation. It must never be described as either.
 
-## Final Readiness Assessment
+## Evidence
 
-All three workflows are implemented, locally validated, and have now been exercised together once on public testnets. Workflow 1 supplied the contract, receiver, and reconciliation foundation; Workflow 2 supplied the confidential decision and transport machinery; Workflow 3 supplied the canonical agents, the position observations, and the privacy-corrected frontend. A single agreement traversed the entire intended path and reached terminal state on both chains.
-
-What remains is not implementation. It is explorer verification of the deployed receiver, hosted HTTPS provider operations, approval-gated DON access, and the outstanding code and ownership review. The demonstrated result is genuine public-testnet execution through a mock forwarder; it is not DON consensus and not hardware TEE attestation, and it should never be described as either.
-
-## Member 1 Operations Update: 2026-09-10
-
-- Added `packages/protocol-ops`, an owner-side read-only readiness check and a dry-run-first reconciliation command.
-- Reconciliation requires a finalized Sepolia breach receipt and a confirmation-qualified Arc full unwind receipt. It verifies exact event provenance, IDs, nonce, complete registry/escrow binding, full-capital return, canonical wiring, owner identity, pending nonce absence, and finality between writes.
-- Broadcast is explicit and sequential; restart from `UNWIND` is supported, while partial or discretionary settlement is rejected. Terminal `SETTLED` requires separate settlement event evidence.
-- Added 47 focused tests for policy, replay/stale nonce, malformed or duplicate evidence, reorg identity, binding mismatch, SAFE/validation misuse, partial return, and terminal-state handling.
-- The mock-forwarder simulation path is wired on Sepolia: receiver `0xA4Ce101a95DCD797690d7Ae8845ea6989D9FDb62`, simulator workflow ID `0x1111111111111111111111111111111111111111111111111111111111111111`, simulator owner `0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa`, and forwarder `0x15fC6ae953E024d975e77382eEeC56A9101f9F88`. The CLI's config-derived hash is not the identity placed into mock-forwarder metadata. This is real Sepolia deployment and wiring, but not DON attestation.
-- A fresh public agreement at `0x08aea1ace117f14f97f852be19c3a68ad07a43be6b42099a24bba64a27ae389b` was activated by receiver-accepted transaction `0x780399f2021a73c88262c51d828935475db79e188889f0b97ee746f3932adaa6`. Arc approval is exactly 10,000,000 USDC base units. The receiver-accepted breach transaction is `0xe2d5de804e294716501baf7ee73203c05fd12ad041ca757275262cdd5c938626`; Arc lock/unwind and owner reconciliation remain finality-gated.
-- An earlier transaction `0x4a9a21b8038f6dfa609ea6b0df908972ce610e430e1b3fad859654a5794b00a7` reached the mock forwarder but emitted `ReportProcessed(..., false)` because the first receiver used the config-derived hash/owner rather than the simulator's fixed metadata identity. It did not consume a sink nonce or change agreement state; the active receiver supersedes it.
-
-## Verified End-to-End Rehearsal: 2026-09-11
-
-The rehearsal that was finality-gated in the previous snapshot has completed. The values below were read back directly from public RPC endpoints, not from local state or logs.
-
-**Agreement** `0x08aea1ace117f14f97f852be19c3a68ad07a43be6b42099a24bba64a27ae389b`, capital `10000000` USDC base units.
-
-### Sepolia, chain 11155111
-
-| Step | Block | Transaction |
-| --- | --- | --- |
-| Validation accepted, agreement activated | 11676619 | `0x780399f2021a73c88262c51d828935475db79e188889f0b97ee746f3932adaa6` |
-| Breach accepted | 11676674 | `0xe2d5de804e294716501baf7ee73203c05fd12ad041ca757275262cdd5c938626` |
-| Owner `markUnwinding` | 11679683 | `0x22dd525f767a07622356124d781b208552db8c9f240d35175e38288bb469ca86` |
-| Owner `markSettled` | 11679756 | `0x7730aabb7cca24db053467a779b346f67de791906c29ea93379737b8cce161b1` |
-
-Final registry state is `SETTLED`. The decision sink reports `lastNonce = 2` and its forwarder is the active receiver `0xA4Ce101a95DCD797690d7Ae8845ea6989D9FDb62`, confirming the cutover. Every transaction above sits below the finalized checkpoint, so the finality gate was satisfied rather than bypassed.
-
-### Arc testnet, chain 5042002
-
-| Step | Block | Transaction |
-| --- | --- | --- |
-| `EscrowLocked` | 61511320 | `0xa451e043238c539d736195dabbbe03c687955f5d6de98aa26b53a89845864722` |
-| `EscrowUnwound` | 61511443 | `0x80925167aa3639108fec481f670c2da04aed92dde2f33a0baeb7922a65cb3313` |
-
-Final escrow state is `UNWOUND`, with the relayer allowance to the escrow back to zero and capital returned.
-
-### Ordering
-
-Arc lock preceded Arc unwind, and both preceded the Sepolia owner reconciliation, which is the required order: reconciliation only broadcasts against a confirmation-qualified Arc unwind receipt.
-
-### Scope of the claim
-
-This is real deployment, real wiring, real transactions, and real state transitions on two public testnets, driven through the CRE CLI mock forwarder. It does not demonstrate DON consensus, DON signature validation, or hardware enclave attestation. The receiver is bound to the simulator's fixed metadata identity and must not be reused for DON delivery.
+Verified public-testnet rehearsal transaction hashes, block numbers, and final states are recorded in `deployments/canonical.json` under `rehearsal`. Deployment identities and the simulator-versus-DON identity distinction are in `packages/cre/INTEGRATION.md`.
 

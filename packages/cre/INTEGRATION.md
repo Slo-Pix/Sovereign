@@ -29,7 +29,7 @@ mock-forwarder simulation reports. A simulation receiver must bind to the fixed
 mock values; a DON receiver must instead bind to the actual deployed workflow
 identity. Never reuse the simulation receiver for DON delivery.
 
-## Arc transport — trusted relayer available; finality-gated rehearsal in progress
+## Arc transport — trusted relayer available; rehearsal completed
 
 Arc is supported; see [the capability finding](evidence/arc-write-target.md). The existing escrow authorizes an EOA relayer, so [packages/relayer](../relayer/README.md) now implements that path with finalized source reads, durable SQLite cursor/receipt state, exact escrow reconciliation and reorg aborts. Direct CRE-to-Arc remains an alternative requiring an Arc receiver, not an implemented deployment. For the available EOA path:
 
@@ -38,7 +38,7 @@ Arc is supported; see [the capability finding](evidence/arc-write-target.md). Th
 - The escrow's authorized relayer must match the configured dedicated EOA key. Source authenticity depends on the authenticated Sepolia receiver/sink; the EOA is explicitly trusted, not a cross-chain proof.
 - Replay/out-of-order protection, exact agreement binding, and idempotent recovery must survive retries.
 - Transfers require the Arc principal's token balance and ERC-20 approval for the escrow. Arc native gas also needs funding; a USDC token balance does not prove gas readiness.
-- Sepolia acceptance and Arc locking are not atomic. The public agreement has passed validation and breach on Sepolia; Arc locking/unwind remain intentionally gated on finalized source evidence and confirmation-qualified destination receipts. No automatic source-registry settlement reconciliation is supplied by the relayer.
+- Sepolia acceptance and Arc locking are not atomic. Locking and unwind stay gated on finalized source evidence and confirmation-qualified destination receipts. Those gates were satisfied, not bypassed, in the completed rehearsal recorded under `rehearsal` in [`deployments/canonical.json`](../../deployments/canonical.json). Owner reconciliation of the source registry is performed separately by [packages/protocol-ops](../protocol-ops/README.md), not by the relayer.
 
 ## Member C — public integration inputs
 

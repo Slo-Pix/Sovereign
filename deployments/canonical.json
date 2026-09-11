@@ -22,5 +22,25 @@
     "relayer": "0x7B20767D2d22326D3a8EfFAd781Ea8557BC7A8E0",
     "verified": true,
     "explorer": "https://testnet.arcscan.app"
+  },
+  "rehearsal": {
+    "verifiedAt": "2026-09-11",
+    "mode": "simulation-broadcast-mock-forwarder",
+    "note": "Real public-testnet execution via the CRE CLI mock forwarder. Not DON consensus and not hardware TEE attestation.",
+    "agreementId": "0x08aea1ace117f14f97f852be19c3a68ad07a43be6b42099a24bba64a27ae389b",
+    "capitalBaseUnits": "10000000",
+    "sepolia": {
+      "finalState": "SETTLED",
+      "decisionNonce": 2,
+      "activation": { "block": 11676619, "tx": "0x780399f2021a73c88262c51d828935475db79e188889f0b97ee746f3932adaa6" },
+      "breach": { "block": 11676674, "tx": "0xe2d5de804e294716501baf7ee73203c05fd12ad041ca757275262cdd5c938626" },
+      "markUnwinding": { "block": 11679683, "tx": "0x22dd525f767a07622356124d781b208552db8c9f240d35175e38288bb469ca86" },
+      "markSettled": { "block": 11679756, "tx": "0x7730aabb7cca24db053467a779b346f67de791906c29ea93379737b8cce161b1" }
+    },
+    "arcTestnet": {
+      "finalState": "UNWOUND",
+      "escrowLocked": { "block": 61511320, "tx": "0xa451e043238c539d736195dabbbe03c687955f5d6de98aa26b53a89845864722" },
+      "escrowUnwound": { "block": 61511443, "tx": "0x80925167aa3639108fec481f670c2da04aed92dde2f33a0baeb7922a65cb3313" }
+    }
   }
 }

@@ -15,7 +15,7 @@ SEPOLIA_BREACH_TX ARC_UNWIND_TX
 For an agreement already in `SETTLED`, also provide `SEPOLIA_SETTLEMENT_TX`. For broadcast, use the original owner key as `DEPLOYER_PRIVATE_KEY`; the command checks it against the registry owner. Never put those values in Git or command history.
 
 ```sh
-set -a; source /home/suyashagrawal/Sovereign/.env; set +a
+set -a; source ./.env; set +a
 bun --no-env-file packages/protocol-ops/src/reconcile.ts
 bun --no-env-file packages/protocol-ops/src/reconcile.ts --broadcast
 ```
