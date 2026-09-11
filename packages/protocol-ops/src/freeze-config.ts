@@ -4,6 +4,8 @@ import { isAbsolute, resolve } from 'node:path';
 
 const ROOT = resolve(import.meta.dir, '../../..');
 const local = (value: string | undefined, fallback: string) => isAbsolute(value || '') ? value! : resolve(ROOT, value || fallback);
+function option(name: string): string | undefined;
+function option(name: string, fallback: string): string;
 function option(name: string, fallback?: string) {
   const index = process.argv.indexOf(name);
   return index >= 0 && process.argv[index + 1] ? process.argv[index + 1]! : fallback;
@@ -12,6 +14,9 @@ function required(name: string) { const value = process.env[name]; if (!value) t
 async function main() {
   const receiver = option('--receiver');
   const origin = option('--origin', 'http://127.0.0.1:3101');
+  const originUrl = new URL(origin);
+  const insecureLoopback = originUrl.protocol === 'http:' && ['127.0.0.1', 'localhost', '[::1]'].includes(originUrl.hostname);
+  if ((originUrl.protocol !== 'https:' && !insecureLoopback) || originUrl.origin !== origin) throw new Error('Invalid position origin');
   const owner = process.env.DEPLOYER_ADDRESS;
   if (!receiver || !isAddress(receiver) || !owner || !isAddress(owner)) throw new Error('Invalid receiver/owner');
   const publicPath = local(process.env.DEMO_PUBLIC_FILE, 'packages/cre/.local/demo.public.json');
@@ -29,7 +34,7 @@ async function main() {
     intentRegistry: '0x2AB9B14995048f0A6e0A80830c2654a1d72f8deD',
     decisionSink: '0xFAf580b27CBE494adcE3F4D9F78caB42a6e3088D',
     policySecretId: 'SOVEREIGN_POLICY', positionAuthSecretId: 'SOVEREIGN_POSITION_AUTH',
-    terms: publicDemo.terms, positionOrigin: origin, allowInsecurePositionLoopback: true,
+    terms: publicDemo.terms, positionOrigin: origin, allowInsecurePositionLoopback: insecureLoopback,
     maxPositionAgeSeconds: 30, delivery: 'simulation-sepolia', reportReceiver: receiver,
   };
   await mkdir(resolve(ROOT, 'packages/cre/.local'), { recursive: true, mode: 0o700 });
