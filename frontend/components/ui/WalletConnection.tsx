@@ -32,7 +32,7 @@ function MissingPrivyConfiguration() {
 }
 
 function PrivyWalletConnection() {
-  const { ready, authenticated, connectWallet, logout, error: privyError } = usePrivy();
+  const { ready, authenticated, login, logout, error: privyError } = usePrivy();
   const { ready: walletsReady, wallets } = useWallets();
   const [error, setError] = useState<string | null>(null);
   const [disconnecting, setDisconnecting] = useState(false);
@@ -47,23 +47,20 @@ function PrivyWalletConnection() {
     setError(null);
 
     try {
-      if (connected) {
+      if (authenticated) {
         setDisconnecting(true);
 
-        if (authenticated) {
-          await logout();
-        }
-
+        await logout();
         wallet?.disconnect();
         setDisconnected(true);
         return;
       }
 
       setDisconnected(false);
-      connectWallet();
+      login();
     } catch {
       setError(
-        connected
+        authenticated
           ? "Wallet disconnect failed. Try again."
           : "Wallet connection unavailable or declined. Try again in Privy.",
       );
@@ -77,11 +74,13 @@ function PrivyWalletConnection() {
     ? "Disconnecting…"
     : !ready || !walletsReady
       ? "Loading wallet"
-      : connected
+      : authenticated
         ? account
           ? `Disconnect: ${shortAddress(account)}`
           : "Disconnect wallet"
-        : "Connect wallet";
+        : connected
+          ? "Sign in with wallet"
+          : "Connect wallet";
 
   return (
     <div className="relative font-code-sm text-code-sm">
@@ -91,11 +90,11 @@ function PrivyWalletConnection() {
         disabled={pending}
         aria-busy={disconnecting}
         title={
-          connected
+          authenticated
             ? account
               ? `Disconnect wallet ${account}`
               : "Disconnect Privy wallet session"
-            : "Connect through Privy; no signature or transaction requested"
+            : "Sign in through Privy to link wallets and use agent signing"
         }
         className="border-2 border-on-surface bg-on-surface text-surface-container-lowest px-3 py-2 neo-shadow disabled:opacity-50"
       >

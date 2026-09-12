@@ -1,0 +1,22 @@
+{
+  "name": "@sovereign/agent-runtime",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "run": "bun --no-env-file src/cli.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test"
+  },
+  "dependencies": {
+    "@turnkey/api-key-stamper": "^0.6.14",
+    "@turnkey/http": "^6.4.0",
+    "@turnkey/sdk-types": "^1.7.0",
+    "@turnkey/viem": "^0.14.40",
+    "viem": "2.56.3"
+  },
+  "devDependencies": {
+    "@types/bun": "1.3.10",
+    "typescript": "5.9.3"
+  }
+}

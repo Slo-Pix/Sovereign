@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useSyncExternalStore } from "react";
+import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
 import { useWallets } from "@privy-io/react-auth";
 import {
   Check,
@@ -155,6 +155,39 @@ export default function AgreementWorkspace() {
   const [notice, setNotice] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [snapshot, setSnapshot] = useState<StatusSnapshot | null>(null);
+
+  const readStatus = useCallback(async (agreementId: string, signal?: AbortSignal): Promise<StatusSnapshot> => {
+    const id = asBytes32(agreementId, "Agreement ID");
+    const response = await fetch(`/api/agreements/${id}/status`, { cache: "no-store", signal });
+    if (!response.ok) throw new Error("Finalized public state is currently unavailable.");
+    return await response.json() as StatusSnapshot;
+  }, []);
+
+  useEffect(() => {
+    if (!deal.agreementId) return;
+
+    let disposed = false;
+    let controller: AbortController | null = null;
+
+    const poll = async () => {
+      controller?.abort();
+      controller = new AbortController();
+      try {
+        const next = await readStatus(deal.agreementId, controller.signal);
+        if (!disposed) setSnapshot(next);
+      } catch {
+        // Background reads are best effort. The manual refresh reports errors to the user.
+      }
+    };
+
+    void poll();
+    const interval = window.setInterval(() => void poll(), 10_000);
+    return () => {
+      disposed = true;
+      controller?.abort();
+      window.clearInterval(interval);
+    };
+  }, [deal.agreementId, readStatus]);
 
   function setDeal(next: PublicWorkspace | ((current: PublicWorkspace) => PublicWorkspace)) {
     const value = typeof next === "function" ? next(deal) : next;
@@ -381,10 +414,7 @@ export default function AgreementWorkspace() {
     if (!deal.agreementId) return;
     start("status", "Refreshing state");
     try {
-      const id = asBytes32(deal.agreementId, "Agreement ID");
-      const response = await fetch(`/api/agreements/${id}/status`, { cache: "no-store" });
-      if (!response.ok) throw new Error("Finalized public state is currently unavailable.");
-      setSnapshot(await response.json() as StatusSnapshot);
+      setSnapshot(await readStatus(deal.agreementId));
       finish("Finalized Sepolia and Arc state refreshed.");
     } catch (cause) {
       fail("Refresh state", cause);

@@ -18,7 +18,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           theme: "light",
         },
         embeddedWallets: {
-          ethereum: { createOnLogin: "off" },
+          // The autonomous demo needs two independent signers: the user's
+          // external Treasury wallet and a gasless embedded Strategy wallet.
+          ethereum: { createOnLogin: "all-users" },
         },
         loginMethods: ["wallet"],
       }}

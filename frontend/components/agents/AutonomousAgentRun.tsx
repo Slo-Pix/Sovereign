@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useWallets } from "@privy-io/react-auth";
-import { Bot, Check, ExternalLink, Play, ShieldCheck } from "lucide-react";
+import { useCreateWallet, useLinkAccount, usePrivy, useWallets } from "@privy-io/react-auth";
+import { Bot, Check, Clipboard, ExternalLink, Play, Plus, ShieldCheck } from "lucide-react";
 import { createWalletClient, custom, type Address, type Hex } from "viem";
 import {
   NegotiationEngine,
@@ -32,6 +32,16 @@ function publicOffer(offer: SignedOffer): string {
   return `${(offer.yieldBps / 100).toFixed(2)}% APR / ${Math.round(offer.duration / DAY)} days`;
 }
 
+function savedIntentId(): string {
+  if (typeof window === "undefined") return "";
+  try {
+    const workspace = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}") as { intentId?: unknown };
+    return typeof workspace.intentId === "string" ? workspace.intentId : "";
+  } catch {
+    return "";
+  }
+}
+
 function walletSigner(wallet: { address: string; switchChain(id: number): Promise<void>; getEthereumProvider(): Promise<EthereumProvider> }): OfferSigner {
   const address = wallet.address as Address;
   const domain = { name: "Sovereign", version: "1", chainId: SEPOLIA_ID, verifyingContract: canonical.sepolia.agreementRegistry as Address } as const;
@@ -52,13 +62,22 @@ function walletSigner(wallet: { address: string; switchChain(id: number): Promis
 type EthereumProvider = { request(args: { method: string; params?: unknown[] }): Promise<unknown> };
 
 export default function AutonomousAgentRun() {
+  const { authenticated } = usePrivy();
   const { wallets, ready } = useWallets();
-  const [intentId, setIntentId] = useState<string>("");
+  const [intentId, setIntentId] = useState<string>(savedIntentId);
   const [capital, setCapital] = useState("100000");
   const [state, setState] = useState<RunState>("idle");
   const [rounds, setRounds] = useState<PublicRound[]>([]);
   const [result, setResult] = useState<{ duration: number; yieldBps: number; signature: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [creatingAgentWallet, setCreatingAgentWallet] = useState(false);
+  const { linkWallet } = useLinkAccount({
+    onError: () => setError("The additional wallet was not linked. Select a different account and approve the Privy linking request."),
+  });
+  const { createWallet } = useCreateWallet({
+    onSuccess: ({ wallet }) => setStrategyAddress(wallet.address),
+    onError: () => setError("The Privy agent wallet could not be created. Check the Privy dashboard's embedded-wallet settings."),
+  });
 
   const walletOptions = useMemo(() => wallets.filter((wallet, index, list) => list.findIndex((item) => item.address.toLowerCase() === wallet.address.toLowerCase()) === index), [wallets]);
   const [treasuryAddress, setTreasuryAddress] = useState("");
@@ -66,6 +85,28 @@ export default function AutonomousAgentRun() {
 
   function selected(address: string) {
     return walletOptions.find((wallet) => wallet.address.toLowerCase() === address.toLowerCase());
+  }
+
+  async function createAgentWallet() {
+    setError(null);
+    setCreatingAgentWallet(true);
+    try {
+      await createWallet();
+    } catch {
+      // Privy's callback provides the sanitized user-facing error above.
+    } finally {
+      setCreatingAgentWallet(false);
+    }
+  }
+
+  function useSavedIntent() {
+    const saved = savedIntentId();
+    if (!saved) {
+      setError("No saved Intent ID was found. Create an intent first from the Create Agreement page.");
+      return;
+    }
+    setIntentId(saved);
+    setError(null);
   }
 
   async function run() {
@@ -121,12 +162,18 @@ export default function AutonomousAgentRun() {
         <span className="border border-on-surface px-2 py-1 font-label-caps text-label-caps font-bold">{state === "running" ? "RUNNING" : state === "complete" ? "CONVERGED" : "READY"}</span>
       </div>
       <div className="grid gap-4 p-5 lg:grid-cols-4">
-        <label><span className="font-label-caps text-label-caps text-secondary font-bold">INTENT ID</span><input className="mt-1 w-full border-2 border-on-surface p-2 font-code-sm" value={intentId} onChange={(e) => setIntentId(e.target.value)} disabled={state === "running"} /></label>
+        <label><span className="flex items-center justify-between gap-2 font-label-caps text-label-caps text-secondary font-bold"><span>INTENT ID</span><button type="button" onClick={useSavedIntent} disabled={state === "running"} className="inline-flex items-center gap-1 border border-on-surface px-1.5 py-0.5 font-label-caps text-label-caps font-bold" title="Load the Intent ID saved by Create Agreement"><Clipboard size={12} />Use saved</button></span><input className="mt-1 w-full border-2 border-on-surface p-2 font-code-sm" value={intentId} onChange={(e) => setIntentId(e.target.value)} disabled={state === "running"} placeholder="0x... bytes32" /></label>
         <label><span className="font-label-caps text-label-caps text-secondary font-bold">CAPITAL / USDC</span><input className="mt-1 w-full border-2 border-on-surface p-2 font-code-sm" value={capital} onChange={(e) => setCapital(e.target.value)} disabled={state === "running"} /></label>
         <label><span className="font-label-caps text-label-caps text-secondary font-bold">TREASURY WALLET</span><select className="mt-1 w-full border-2 border-on-surface bg-white p-2 font-code-sm" value={treasuryAddress} onChange={(e) => setTreasuryAddress(e.target.value)} disabled={state === "running"}><option value="">Select wallet</option>{walletOptions.map((wallet) => <option key={wallet.address} value={wallet.address}>{short(wallet.address)}</option>)}</select></label>
         <label><span className="font-label-caps text-label-caps text-secondary font-bold">STRATEGY WALLET</span><select className="mt-1 w-full border-2 border-on-surface bg-white p-2 font-code-sm" value={strategyAddress} onChange={(e) => setStrategyAddress(e.target.value)} disabled={state === "running"}><option value="">Select wallet</option>{walletOptions.map((wallet) => <option key={wallet.address} value={wallet.address}>{short(wallet.address)}</option>)}</select></label>
       </div>
-      <div className="flex flex-wrap items-center gap-3 border-t border-on-surface p-5"><button type="button" onClick={run} disabled={!ready || state === "running" || walletOptions.length < 2} className="inline-flex min-h-11 items-center gap-2 border-2 border-on-surface bg-on-surface px-4 py-2 font-code-sm font-bold text-white disabled:opacity-40"><Play size={16} />Run autonomous negotiation</button>{state === "complete" && <button type="button" onClick={loadIntoWorkspace} className="inline-flex min-h-11 items-center gap-2 border-2 border-on-surface bg-primary-container px-4 py-2 font-code-sm font-bold"><ExternalLink size={16} />Load converged terms</button>}{walletOptions.length < 2 && <span className="font-code-sm text-secondary">Connect two wallets to run both agents.</span>}</div>
+      <div className="flex flex-wrap items-center gap-3 border-t border-on-surface p-5">
+        {walletOptions.length < 2 && <button type="button" onClick={createAgentWallet} disabled={!ready || !authenticated || state === "running" || creatingAgentWallet} className="inline-flex min-h-11 items-center gap-2 border-2 border-on-surface bg-surface-container-lowest px-4 py-2 font-code-sm font-bold disabled:opacity-40"><Plus size={16} />{creatingAgentWallet ? "Creating agent wallet" : "Create strategy wallet"}</button>}
+        {walletOptions.length < 2 && <button type="button" onClick={() => { setError(null); linkWallet({ description: "Link a second wallet for the Strategy agent. This preserves your current Treasury wallet." }); }} disabled={!ready || !authenticated || state === "running" || creatingAgentWallet} className="inline-flex min-h-11 items-center gap-2 border-2 border-on-surface bg-surface-container-lowest px-4 py-2 font-code-sm font-bold disabled:opacity-40"><Plus size={16} />Link second wallet</button>}
+        <button type="button" onClick={run} disabled={!ready || state === "running" || walletOptions.length < 2} className="inline-flex min-h-11 items-center gap-2 border-2 border-on-surface bg-on-surface px-4 py-2 font-code-sm font-bold text-white disabled:opacity-40"><Play size={16} />Run autonomous negotiation</button>
+        {state === "complete" && <button type="button" onClick={loadIntoWorkspace} className="inline-flex min-h-11 items-center gap-2 border-2 border-on-surface bg-primary-container px-4 py-2 font-code-sm font-bold"><ExternalLink size={16} />Load converged terms</button>}
+        {walletOptions.length < 2 && <span className="font-code-sm text-secondary">{authenticated ? "Link a second wallet to preserve both independent agent identities." : "Sign in through Privy before adding a second wallet."}</span>}
+      </div>
       {error && <div className="mx-5 mb-5 border-2 border-red-700 bg-red-50 p-3 font-code-sm text-red-800">{error}</div>}
       {rounds.length > 0 && <div className="border-t border-on-surface"><div className="flex items-center gap-2 border-b border-on-surface p-4 font-label-caps text-label-caps font-bold"><ShieldCheck size={16} />PUBLIC ROUND EVIDENCE</div>{rounds.map((round) => <div key={`${round.round}-${round.actor}`} className="grid grid-cols-[60px_1fr_auto] gap-3 border-b border-surface-container-high p-3 font-code-sm"><span>R{round.round}</span><span><strong>{round.actor}</strong> / {round.action}</span><span className="text-primary">{round.terms}</span></div>)}</div>}
       {state === "complete" && result && <div className="flex items-center gap-2 border-t-2 border-on-surface bg-[#E6F4EA] p-4 font-code-sm"><Check size={17} />Terms converged at {(result.yieldBps / 100).toFixed(2)}% APR for {Math.round(result.duration / DAY)} days. The Strategy signature is ready for the agreement workspace.</div>}

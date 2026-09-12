@@ -7,8 +7,8 @@ import { tmpdir } from 'node:os'
 import { resolve } from 'node:path'
 import { setTimeout as delay } from 'node:timers/promises'
 import { createPublicClient, createWalletClient, defineChain, http, type Abi, type Hex } from 'viem'
-import { assertLocalRpc } from './chain-guards'
-export { LOCAL_MODE } from './chain-guards'
+import { assertLocalRpc } from './chain-guards.js'
+export { LOCAL_MODE } from './chain-guards.js'
 
 export const ROOT = resolve(import.meta.dir, '../../..')
 export const FOUNDRY_VERSION = 'system-installed'
