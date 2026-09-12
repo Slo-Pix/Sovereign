@@ -1,7 +1,7 @@
 # Sovereign
 
 <p align="center">
-  <img src="./frontend/public/logo.png" alt="Sovereign" width="360" />
+  <img src="./frontend/public/logo2.png" alt="Sovereign" width="360" />
 </p>
 
 **Private risk policies, enforced onchain, without revealing the policy.**
