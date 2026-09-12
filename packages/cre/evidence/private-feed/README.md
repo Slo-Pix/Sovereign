@@ -22,4 +22,4 @@ The actual CLI redirect probes exercise HTTP 302; unit tests additionally reject
 
 Full validation also passed: **39 unit/SDK tests, 298 assertions**, strict TypeScript checks, live-workflow WASM compilation without warnings, and all seven existing decision simulations.
 
-Reproduce using `bun run --cwd packages/cre demo:feed` from the repository root. The command has no broadcast flag and the probe binary has no EVM writer. See [client configuration and limitations](../../PRIVATE_FEED.md).
+Reproduce using `bun run --cwd packages/cre demo:feed` from the repository root. The command has no broadcast flag and the probe binary has no EVM writer. See [client configuration and limitations](../../README.md#private-position-feed).

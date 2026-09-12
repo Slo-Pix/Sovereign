@@ -58,15 +58,66 @@ The public decision tuple is `(agreementId, decisionId, checkKind, result, nonce
 Use [sovereign/config.example.json](sovereign/config.example.json) as the public template. Its identifiers/host are deliberately unusable placeholders. Supply a local private configuration at the ignored path specified by [sovereign/workflow.yaml](sovereign/workflow.yaml).
 
 - Set the actual agreement ID and all eight final terms, including offer expiry and nonce.
-- Set `positionOrigin` and `positionAuthSecretId`; the old `positionUrl` is rejected. Put credentials in the secret store, not public config. [PRIVATE_FEED.md](PRIVATE_FEED.md) defines the exact credential format and provider contract.
+- Set `positionOrigin` and `positionAuthSecretId`; the old `positionUrl` is rejected. Put credentials in the secret store, not public config. The credential format and provider contract are defined under [Private position feed](#private-position-feed) below.
 - Keep `delivery: report-only` until an authenticated receiver is deployed and verified. For Sepolia writes, set its actual `reportReceiver`; the existing sink is not a substitute.
 - `delivery: simulation-sepolia` is the only mode that permits an explicit `http://127.0.0.1:PORT` feed while broadcasting through the mock forwarder. Production `delivery: sepolia` remains HTTPS-only.
-- CRE CLI v1.33.0 mock broadcast uses fixed simulator workflow identity values, documented in [INTEGRATION.md](INTEGRATION.md). The config-derived workflow hash must not be substituted for those mock metadata values.
 - Trigger index 0 validates offers; index 1 monitors breaches. `NO_DECISION` is not a SAFE attestation.
 - [sovereign/secrets.yaml](sovereign/secrets.yaml) maps secret IDs to local simulation variables. [The environment example](.env.example) contains empty placeholders only. Never use real sensitive policies with local simulation.
 - [project.yaml](project.yaml) configures CRE's Sepolia RPC. `SEPOLIA_RPC_URL` and `ARC_RPC_URL` separately configure the read-only preflight and are never printed by it.
 
 Demo configurations are generated temporarily and passed via CLI overrides. Their absent private default paths are intentional. Setting report delivery does not itself authorize broadcasting; none of the commands above performs deployment or broadcast.
+
+## Simulator metadata identity
+
+Read this before deploying or rebuilding a receiver. Getting it wrong silently rejects every report.
+
+CRE CLI v1.33.0 simulation inserts **fixed** identity values into mock-forwarder report metadata:
+
+```text
+workflow ID     0x1111111111111111111111111111111111111111111111111111111111111111
+workflow owner  0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa
+mock forwarder  0x15fC6ae953E024d975e77382eEeC56A9101f9F88   (Sepolia)
+```
+
+The value printed by `cre workflow hash` is the deploy-style identity and is **not**
+what the simulator puts into reports. A simulation receiver must bind to the fixed
+mock values above. Substituting the config-derived hash produces a receiver that
+accepts nothing — this already caused one failed deployment, recorded in
+[`deployments/canonical.json`](../../deployments/canonical.json) as
+`creConfigDerivedWorkflowHash`, which is kept separate from the deployed identity
+for exactly this reason.
+
+Mock delivery produces genuine Sepolia transactions, but it is not a cryptographic
+authenticity proof. Never imply a simulator report proves attestation.
+
+## Private position feed
+
+The workflow fetches `ORIGIN/agreements/LOWERCASE_AGREEMENT_ID/position`. There is no
+caller-controlled path, query or credential-in-URL.
+
+The credential is retrieved with `TeeRuntime.getSecret` and must be a JSON object with
+exactly three fields:
+
+```json
+{ "origin": "https://positions.example.com", "agreementId": "0x…", "token": "…" }
+```
+
+| Field | Rule |
+| --- | --- |
+| `origin` | Must equal the configured `positionOrigin` exactly. HTTPS by default; lowercase ASCII DNS host, optional port, no trailing slash, path, query or IP literal. |
+| `agreementId` | Must equal the configured `agreementId`. A config-only substitution produces no HTTP request at all. |
+| `token` | 32–4096 characters matching `[A-Za-z0-9._~+/-]` with optional `=` padding and no whitespace. |
+
+Request behaviour: HTTP GET, five-second timeout, `Accept: application/json`,
+`Authorization: Bearer TOKEN`, `Cache-Control: no-store`, SDK caching disabled, and
+**no application-level retry**. Credential errors, HTTP failures, redirects,
+malformed or oversized bodies, wrong agreement IDs and stale or future observations
+all yield no usable position and therefore no SAFE or BREACHED report.
+
+Binding a credential to a destination does not verify the provider's observations.
+An authorized malicious provider can still cause a wrongful unwind or suppress a
+needed one. DNS, HTTPS and the provider remain trust dependencies; nonce protection
+does not make false source data truthful.
 
 ## Evidence and judging claims
 
@@ -98,10 +149,8 @@ Keep private values and detailed errors out of logs, UI, telemetry, reports and 
 
 ## Integration prerequisites
 
-The provider and a [trusted EOA relayer](../relayer/README.md) are now implemented and locally tested. Public-testnet operation still requires receiver deployment/identity wiring, HTTPS provider/token provisioning, funded wallets and token allowance, correct replay origins and actual public receipt/balance evidence. The relayer verifies finalized source events and recovers using escrow state/proofs; it is not an atomic cryptographic bridge. ENS authorization requires a genuine registry hook if retained. See [INTEGRATION.md](INTEGRATION.md) for responsibilities and [PRIVATE_FEED.md](PRIVATE_FEED.md) for feed setup/limits.
+The provider and a [trusted EOA relayer](../relayer/README.md) are now implemented and locally tested. Public-testnet operation still requires receiver deployment/identity wiring, HTTPS provider/token provisioning, funded wallets and token allowance, correct replay origins and actual public receipt/balance evidence. The relayer verifies finalized source events and recovers using escrow state/proofs; it is not an atomic cryptographic bridge. ENS authorization requires a genuine registry hook if retained.
 
 ## Attribution
 
 The confidential-handler integration was developed using Chainlink's `hello-confidential-workflows-ts` starter and [Confidential Workflows documentation](https://docs.chain.link/cre/concepts/confidential-workflows). The starter demonstration is not required to run this package. Third-party dependencies retain their own licenses; this README does not relicense them. Preserve any competition-required AI-use disclosure when packaging the submission.
-
-----x----x----x----x----x----
