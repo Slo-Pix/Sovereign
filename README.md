@@ -1,5 +1,9 @@
 # Sovereign
 
+<p align="center">
+  <img src="./frontend/public/logo.png" alt="Sovereign" width="360" />
+</p>
+
 **Private risk policies, enforced onchain, without revealing the policy.**
 
 Two parties negotiate a capital agreement. The lender has a private risk policy —
@@ -44,6 +48,14 @@ enclave execution. See [security boundaries](#security-boundaries-and-honest-lim
 
 ## How it works
 
+### Architecture
+
+<p align="center">
+  <img src="./frontend/public/architecture.png" alt="Sovereign architecture showing the agent interface, confidential CRE decision, and onchain enforcement layers" width="100%" />
+</p>
+
+_Figure 1. Sovereign separates negotiation, confidential evaluation, and onchain enforcement. Solid arrows represent public data flow; dashed arrows represent private or confidential data flow._
+
 ```mermaid
 flowchart TD
     A["Lender commits private policy<br/>keccak256(minYield, maxLoss, maxDuration, salt)"] --> B
@@ -61,6 +73,12 @@ flowchart TD
 
 The privacy property comes from three choices working together:
 
+<p align="center">
+  <img src="./frontend/public/privacy_boundary.png" alt="Sovereign privacy boundary showing private inputs, confidential CRE evaluation, and public outcomes" width="100%" />
+</p>
+
+_Figure 2. Sovereign publishes commitments, decisions, and enforcement effects while keeping policy thresholds, salts, exact observations, and evaluation rationale private._
+
 1. **Salted commitment.** Thresholds are small integers, so an unsalted hash
    would be trivially enumerable. A 32-byte salt prevents that.
 2. **Decision-only publication.** The workflow emits a decision, never the
@@ -71,6 +89,14 @@ The privacy property comes from three choices working together:
    contract-side as `NonActionableDecision`.
 
 ### The enforced path, step by step
+
+### Agreement lifecycle
+
+<p align="center">
+  <img src="./frontend/public/agreement_lifecycle.png" alt="Sovereign agreement lifecycle from open through negotiation, validation, activation, breach, unwind, and settlement" width="100%" />
+</p>
+
+_Figure 3. The agreement state machine, including rejection and the breach-to-unwind settlement path._
 
 **Agreement creation.** A principal creates an intent through `IntentRegistry`
 carrying public bounds plus the policy commitment. A signed seven-field canonical
@@ -87,11 +113,23 @@ same public result, so a failed match reveals nothing extra.
 report schema, derived decision ID and nonce before calling `DecisionSink`. The
 sink then applies replay, state, decision-kind and terminal-state guards.
 
+<p align="center">
+  <img src="./frontend/public/cre_decision_delivery.png" alt="CRE decision delivery sequence from confidential evaluation through the forwarder, receiver, decision sink, and agreement registry" width="100%" />
+</p>
+
+_Figure 4. SAFE evaluation stops without a report or nonce; actionable reports pass through receiver and sink validation before an agreement state can change._
+
 **Cross-chain settlement.** The relayer reads *finalized* Sepolia
 `DecisionRecorded` events, verifies agreement binding, nonce, decision ID and
 reorg safety, then locks or unwinds Arc escrow. Owner reconciliation separately
 advances the Sepolia registry from `UNWIND` to `SETTLED`. The relayer is an
 explicitly trusted EOA transport, not a trustless bridge.
+
+<p align="center">
+  <img src="./frontend/public/cross_chain_settlement.png" alt="Cross-chain settlement sequence from finalized Sepolia decisions through the trusted relayer to Arc escrow" width="100%" />
+</p>
+
+_Figure 5. The trusted relayer waits for finalized Sepolia evidence, verifies decision binding and reorg safety, and then locks or unwinds Arc escrow._
 
 **Position-feed boundary.** The feed stores only scoped token hashes and exact
 four-field observations. Read and write credentials are separate,
@@ -99,6 +137,12 @@ agreement-bound, rotatable, revocable and quota-limited. For demos the full
 service stays private on loopback and only a read-only gateway is exposed, which
 serves `GET /health` and bearer-authenticated position reads and forwards no
 write or administrative route.
+
+<p align="center">
+  <img src="./frontend/public/position_feed_security.png" alt="Position-feed security boundary from offchain data sources through a private position service and authenticated gateway to confidential CRE evaluation" width="100%" />
+</p>
+
+_Figure 6. Conceptual production position-feed boundary. The current testnet demo uses a simulated position provider rather than direct CEX or DeFi venue integrations; only authenticated observations enter CRE and only the resulting decision may leave it._
 
 ## Repository structure
 
