@@ -1,95 +1,23 @@
 import Link from "next/link";
-import { LockKeyhole } from "lucide-react";
+import { ExternalLink, LockKeyhole } from "lucide-react";
 import StatusBadge from "@/components/ui/StatusBadge";
-import { ACTIVITY_EVENTS } from "@/lib/mock-data";
+import canonical from "../../../../deployments/canonical.json";
+import { readLiveAgreement } from "@/lib/server/live-ledger";
+import { ESCROW_STATES, REGISTRY_STATES } from "@/lib/server/public-status";
 
-export default function ActivityPage() {
-  return (
-    <div className="space-y-unit-6">
-      {/* Header & Metrics Strip */}
-      <section className="flex flex-col md:flex-row md:items-end justify-between border-b-2 border-on-surface pb-unit-5 gap-unit-4">
-        <div>
-          <div className="flex items-center gap-unit-2 mb-unit-1">
-            <span className="font-label-caps text-label-caps bg-on-surface text-surface-container-lowest px-unit-2 py-0.5 tracking-widest font-bold">
-              OVERVIEW ACTIVITY
-            </span>
-          </div>
-          <h1 className="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">
-            Activity Ledger
-          </h1>
-          <p className="font-body-md text-body-md text-secondary mt-1">
-            Public protocol events across both chains.
-          </p>
-        </div>
-        <div className="flex items-center gap-unit-3">
-          <div className="border border-on-surface bg-surface-container-lowest px-unit-4 py-unit-2 flex flex-col items-center justify-center neo-shadow">
-            <div className="font-label-caps text-label-caps text-secondary font-bold">EVENTS</div>
-            <div className="font-code-md text-code-md font-bold text-on-surface">{ACTIVITY_EVENTS.length}</div>
-          </div>
-          <div className="border border-on-surface bg-surface-container-lowest px-unit-4 py-unit-2 flex flex-col items-center justify-center neo-shadow">
-            <div className="font-label-caps text-label-caps text-secondary font-bold">DATA SOURCE</div>
-            <div className="font-code-md text-code-md font-bold text-primary">PUBLIC RECORD</div>
-          </div>
-        </div>
-      </section>
+export const dynamic = "force-dynamic";
 
-      {/* Cross-Chain Activity Table */}
-      <section className="bg-surface-container-lowest border-2 border-on-surface neo-shadow-lg overflow-x-auto">
-        <div className="bg-surface-container-high border-b-2 border-on-surface px-unit-4 py-unit-2 flex items-center justify-between font-label-caps text-label-caps">
-          <div className="flex items-center gap-2 font-bold text-on-surface">
-            <span>TABLE VIEW:</span>
-            <span className="text-secondary">PROTOCOL EVENTS</span>
-          </div>
-        </div>
-        <table className="w-full text-left border-collapse">
-          <thead>
-            <tr className="bg-surface-container border-b-2 border-on-surface font-label-caps text-label-caps uppercase text-secondary">
-              <th className="py-unit-3 px-unit-4 font-bold border-r border-surface-container-highest">Timestamp / Chain</th>
-              <th className="py-unit-3 px-unit-4 font-bold border-r border-surface-container-highest">Agreement Ref</th>
-              <th className="py-unit-3 px-unit-4 font-bold border-r border-surface-container-highest">Event Description</th>
-              <th className="py-unit-3 px-unit-4 font-bold border-r border-surface-container-highest text-center">Status</th>
-              <th className="py-unit-3 px-unit-4 font-bold text-right">Reference</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-surface-container-highest font-body-sm text-body-sm">
-            {ACTIVITY_EVENTS.map((evt) => (
-              <tr key={evt.id} className="ledger-row">
-                <td className="py-unit-3 px-unit-4 border-r border-surface-container-highest">
-                  <div className="font-code-md text-code-md font-semibold text-on-surface">{evt.time}</div>
-                  <div className="font-label-caps text-label-caps text-secondary mt-1">{evt.chain}</div>
-                </td>
-                <td className="py-unit-3 px-unit-4 border-r border-surface-container-highest">
-                  <Link href={`/agreements/${evt.agreement.replace('#', '')}`} className="font-code-sm text-code-sm font-bold text-primary hover:underline">
-                    {evt.agreement}
-                  </Link>
-                </td>
-                <td className="py-unit-3 px-unit-4 border-r border-surface-container-highest">
-                  <div className="font-body-sm text-body-sm font-bold text-on-surface">
-                    {evt.event}
-                  </div>
-                </td>
-                <td className="py-unit-3 px-unit-4 border-r border-surface-container-highest text-center">
-                  <StatusBadge status={evt.status} />
-                </td>
-                <td className="py-unit-3 px-unit-4 text-right">
-                  <div className="font-code-sm text-code-sm text-secondary bg-surface-container-high border border-on-surface px-unit-2 py-0.5 inline-block">
-                    {evt.reference}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </section>
-
-      {/* Log Footer */}
-      <div className="flex items-center justify-between text-xs font-code-sm text-secondary bg-surface-container-low border border-on-surface p-unit-3">
-        <span>Showing the {ACTIVITY_EVENTS.length} most recent events.</span>
-        <div className="flex items-center gap-unit-2">
-          <LockKeyhole size={14} strokeWidth={2.5} aria-hidden="true" />
-          <span>SEPOLIA + ARC</span>
-        </div>
-      </div>
-    </div>
-  );
+export default async function ActivityPage() {
+  const rehearsal = canonical.rehearsal;
+  let live: Awaited<ReturnType<typeof readLiveAgreement>> | null = null;
+  try { live = await readLiveAgreement(rehearsal.agreementId as `0x${string}`); } catch { live = null; }
+  const events = [
+    ["Sepolia", "Validation accepted", rehearsal.sepolia.activation],
+    ["Sepolia", "Breach accepted", rehearsal.sepolia.breach],
+    ["Arc", "Escrow locked", rehearsal.arcTestnet.escrowLocked],
+    ["Arc", "Escrow unwound", rehearsal.arcTestnet.escrowUnwound],
+    ["Sepolia", "Agreement marked unwinding", rehearsal.sepolia.markUnwinding],
+    ["Sepolia", "Agreement settled", rehearsal.sepolia.markSettled],
+  ] as const;
+  return <div className="space-y-unit-6"><section className="flex flex-col md:flex-row md:items-end justify-between border-b-2 border-on-surface pb-unit-5 gap-unit-4"><div><span className="font-label-caps text-label-caps bg-on-surface text-surface-container-lowest px-unit-2 py-0.5 tracking-widest font-bold">LIVE ACTIVITY</span><h1 className="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight mt-2">Activity Ledger</h1><p className="font-body-md text-body-md text-secondary mt-1">Recorded transaction receipts from the canonical cross-chain rehearsal.</p></div><div className="border border-on-surface bg-surface-container-lowest px-unit-4 py-unit-2 neo-shadow"><div className="font-label-caps text-label-caps text-secondary font-bold">RECEIPTS</div><div className="font-code-md text-code-md font-bold text-on-surface">{events.length}</div></div></section><section className="border-2 border-on-surface bg-surface-container-lowest p-unit-4 neo-shadow"><div className="font-label-caps text-label-caps font-bold">AGREEMENT</div><Link href={`/agreements/${rehearsal.agreementId}`} className="font-code-sm text-code-sm mt-2 break-all underline">{rehearsal.agreementId}</Link>{live && <div className="mt-3 font-code-sm">Finalized reads: <StatusBadge status={REGISTRY_STATES[live.registryState]} /> <StatusBadge status={ESCROW_STATES[live.escrowState]} /></div>}</section><section className="bg-surface-container-lowest border-2 border-on-surface neo-shadow-lg overflow-x-auto"><table className="w-full text-left border-collapse"><thead><tr className="bg-surface-container border-b-2 border-on-surface font-label-caps text-label-caps text-secondary"><th className="py-unit-3 px-unit-4">Chain / Step</th><th className="py-unit-3 px-unit-4">Block</th><th className="py-unit-3 px-unit-4">Transaction</th><th className="py-unit-3 px-unit-4 text-right">Open</th></tr></thead><tbody>{events.map(([chain, step, entry]) => <tr key={entry.tx} className="border-b border-surface-container-highest font-code-sm"><td className="py-unit-4 px-unit-4"><strong>{chain}</strong><div className="text-secondary">{step}</div></td><td className="py-unit-4 px-unit-4">{entry.block}</td><td className="py-unit-4 px-unit-4 break-all">{entry.tx}</td><td className="py-unit-4 px-unit-4 text-right"><a href={`${chain === "Arc" ? canonical.arcTestnet.explorer : canonical.sepolia.explorer}/tx/${entry.tx}`} target="_blank" rel="noreferrer noopener" title="Open transaction in explorer"><ExternalLink size={16} /></a></td></tr>)}</tbody></table></section><div className="flex items-center gap-unit-2 font-code-sm text-secondary"><LockKeyhole size={14} /> FINALIZED PUBLIC RECEIPTS · SEPOLIA + ARC</div></div>;
 }
