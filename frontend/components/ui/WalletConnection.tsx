@@ -1,82 +1,57 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
 
-// Local EIP-1193 surface; no wallet SDK or global Window declaration needed.
-type ProviderListener = (value: unknown) => void;
-type EthereumProvider = {
-  request: (args: { method: "eth_requestAccounts" }) => Promise<unknown>;
-  on?: (event: "accountsChanged" | "disconnect", listener: ProviderListener) => void;
-  removeListener?: (event: "accountsChanged" | "disconnect", listener: ProviderListener) => void;
-};
+const privyConfigured = Boolean(process.env.NEXT_PUBLIC_PRIVY_APP_ID);
 
-function firstAccount(value: unknown): string | null {
-  return Array.isArray(value) && typeof value[0] === "string" && /^0x[0-9a-fA-F]{40}$/.test(value[0])
-    ? value[0]
-    : null;
+function shortAddress(address: string): string {
+  return `${address.slice(0, 6)}…${address.slice(-4)}`;
 }
 
-export default function WalletConnection() {
-  const [account, setAccount] = useState<string | null>(null);
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const cleanup = useRef<(() => void) | null>(null);
-  const requestId = useRef(0);
-  const connecting = useRef(false);
+function MissingPrivyConfiguration() {
+  return (
+    <div className="relative font-code-sm text-code-sm">
+      <button
+        type="button"
+        disabled
+        title="Configure NEXT_PUBLIC_PRIVY_APP_ID to enable wallet connection"
+        className="border-2 border-on-surface bg-on-surface text-surface-container-lowest px-3 py-2 neo-shadow disabled:opacity-50"
+      >
+        Wallet unavailable
+      </button>
+      <p role="alert" className="absolute right-0 top-full mt-2 w-72 max-w-[80vw] border-2 border-on-surface bg-surface-container-lowest p-3 text-on-surface neo-shadow">
+        Privy wallet connection is not configured. Set NEXT_PUBLIC_PRIVY_APP_ID and restart the frontend.
+      </p>
+    </div>
+  );
+}
 
-  useEffect(() => () => {
-    requestId.current += 1;
-    cleanup.current?.();
-  }, []);
+function PrivyWalletConnection() {
+  const { ready, authenticated, connectWallet, logout, error: privyError } = usePrivy();
+  const { ready: walletsReady, wallets } = useWallets();
+  const [error, setError] = useState<string | null>(null);
+  const account = wallets[0]?.address ?? null;
+  const pending = !ready || !walletsReady;
 
   async function connect() {
-    if (connecting.current) return;
-    cleanup.current?.();
-    cleanup.current = null;
-    const id = ++requestId.current;
-    setAccount(null);
+    if (pending) return;
     setError(null);
-    const provider = (window as Window & { ethereum?: EthereumProvider }).ethereum;
-    if (!provider || typeof provider.request !== "function") {
-      setError("No injected wallet available. Install or enable a browser wallet.");
-      return;
-    }
 
-    connecting.current = true;
-    setPending(true);
-    const accountsChanged: ProviderListener = (accounts) => {
-      requestId.current += 1;
-      setAccount(firstAccount(accounts));
-      setError(null);
-    };
-    const disconnected: ProviderListener = () => {
-      requestId.current += 1;
-      setAccount(null);
-      setError("Wallet disconnected. Reconnect to display an account.");
-    };
     try {
-      if (provider.on && provider.removeListener) {
-        cleanup.current = () => {
-          provider.removeListener?.("accountsChanged", accountsChanged);
-          provider.removeListener?.("disconnect", disconnected);
-        };
-        provider.on("accountsChanged", accountsChanged);
-        provider.on("disconnect", disconnected);
+      if (authenticated && account) {
+        await logout();
+        return;
       }
-      const address = firstAccount(await provider.request({ method: "eth_requestAccounts" }));
-      if (id !== requestId.current) return;
-      if (!address) throw new Error("No account");
-      setAccount(address);
+
+      connectWallet();
     } catch {
-      if (id === requestId.current) {
-        setAccount(null);
-        setError("Wallet connection unavailable or declined. Try again in your wallet.");
-      }
-    } finally {
-      connecting.current = false;
-      setPending(false);
+      setError("Wallet connection unavailable or declined. Try again in Privy.");
     }
   }
+
+  const displayedError = error || privyError?.message || null;
+  const label = pending ? "Loading wallet" : account ? `Wallet: ${shortAddress(account)}` : "Connect wallet";
 
   return (
     <div className="relative font-code-sm text-code-sm">
@@ -84,17 +59,23 @@ export default function WalletConnection() {
         type="button"
         onClick={connect}
         disabled={pending}
-        title={account ? `Wallet account: ${account}. No signature or transaction requested.` : "Request wallet account access only"}
+        title={account ? `Wallet account: ${account}. No signature or transaction requested.` : "Connect through Privy; no signature or transaction requested"}
         className="border-2 border-on-surface bg-on-surface text-surface-container-lowest px-3 py-2 neo-shadow disabled:opacity-50"
       >
-        {pending ? "Connecting…" : account ? `Wallet: ${account.slice(0, 6)}…${account.slice(-4)}` : "Connect wallet"}
+        {label}
       </button>
-      <span className="sr-only" role="status">{account ? `Connected account ${account}. No signing or transactions.` : "No connected account."}</span>
-      {error && (
-        <p role="alert" className="absolute right-0 top-full mt-2 w-64 max-w-[75vw] border-2 border-on-surface bg-surface-container-lowest p-3 text-on-surface neo-shadow">
-          {error}
+      <span className="sr-only" role="status">
+        {account ? `Connected account ${account}. No signing or transactions.` : "No connected account."}
+      </span>
+      {displayedError && (
+        <p role="alert" className="absolute right-0 top-full mt-2 w-72 max-w-[80vw] border-2 border-on-surface bg-surface-container-lowest p-3 text-on-surface neo-shadow">
+          Wallet connection unavailable. Check Privy configuration and try again.
         </p>
       )}
     </div>
   );
+}
+
+export default function WalletConnection() {
+  return privyConfigured ? <PrivyWalletConnection /> : <MissingPrivyConfiguration />;
 }

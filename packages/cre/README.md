@@ -2,7 +2,7 @@
 
 Confidential offer validation and breach-only risk monitoring for Sovereign. Workflows consume the shared core encoders and ABIs without changing their encoding.
 
-**Status:** decision logic, authenticated position reads and simulation tooling are implemented. Evidence demonstrates local CRE execution with synthetic inputs and separate read-only testnet checks—not a deployed hardware TEE or a completed two-chain lifecycle. This is unaudited testnet software.
+**Status:** decision logic, authenticated position reads, simulation tooling, and the public-testnet mock-forwarder rehearsal are implemented. The rehearsal covers Sepolia activation/breach, Arc lock/unwind, and owner reconciliation. This is not a deployed hardware TEE or real DON attestation, and remains unaudited testnet software.
 
 ## Quick start
 

@@ -18,7 +18,7 @@ const features = [
   },
   {
     title: "Silence is the default",
-    body: "A healthy position produces no report, no transaction and no event. Enforcement is only ever visible when it actually fires, so routine monitoring leaks nothing about how close you are to a threshold.",
+    body: "A healthy position produces no report, no transaction and no event. This reduces routine disclosure, while timing, public observations and repeated agreements can still reveal bounded information.",
   },
   {
     title: "Decisions, not data",
@@ -69,7 +69,7 @@ export default function LandingPage() {
               </h1>
               <p className="font-body-lg text-body-lg text-secondary mb-8 max-w-xl">
                 Sovereign lets a lender commit to a private risk policy, have it enforced automatically across two chains,
-                and publish nothing but the decision. No thresholds onchain. No signal when everything is fine.
+                and publish only the decision needed for enforcement. No thresholds onchain. SAFE monitoring stays silent.
               </p>
               <div className="flex flex-wrap gap-4">
                 <Link href={`/agreements/${AGREEMENT}`} className="bg-primary-container text-on-primary border-2 border-on-surface px-6 py-3 font-code-md font-bold neo-shadow neo-press">See a live agreement</Link>
@@ -112,7 +112,7 @@ export default function LandingPage() {
               <p className="text-secondary">
                 Your policy is committed as a salted hash, so it is provably fixed but not readable. Evaluation happens
                 off-chain against authenticated data, and only an actionable decision is ever written. A safe position
-                produces no transaction at all, so watching the chain tells an observer nothing.
+                produces no transaction at all, reducing observable output without guaranteeing complete threshold secrecy.
               </p>
             </div>
           </div>

@@ -5,11 +5,23 @@ Use **Node 22** for production builds. Bun can run agent tests but Bun 1.3.13's 
 ## Implemented integration
 
 - Agent EIP-712 signing imports core's canonical seven-field type and digest. `proposer` is the counterparty address; `proposerRole` is unsigned negotiation metadata. Both agents require `{intentId,principal,counterparty}` binding and second-based durations. Final terms retain expiry and offer nonce, separate from decision nonce.
-- The wallet button calls the injected wallet's account-request API only on explicit click. It is not a transaction, signature verification or protocol authorization.
+- The wallet button uses Privy's wallet connection modal only on explicit click. It restores/displays the connected account through Privy and does not request a signature, transaction, or protocol authorization.
 - `/monitoring` accepts an actual bytes32 agreement ID and reads `/api/agreements/:id/status`. The server reads finalized Sepolia/Arc blocks and returns only public state/block numbers. Errors do not fall back to mock data. No private position endpoint or token is exposed to the browser.
 - Other dashboard pages are explicitly labeled synthetic examples. Their fixture status/address/metrics are not evidence of live transactions, verification, ZK proofs or TEE execution. Private policy inputs and SAFE history are not collected/displayed.
 
 ## Server configuration and checks
+
+### Privy wallet setup
+
+Create a Privy application, enable wallet login/connection in the Privy dashboard, and set the public application ID before starting Next.js:
+
+```bash
+cp .env.example .env.local
+# edit .env.local and set NEXT_PUBLIC_PRIVY_APP_ID
+npm run dev
+```
+
+The frontend intentionally keeps embedded-wallet creation disabled. Privy is used for wallet connection and account display only; transaction and signing flows remain disabled in this read-only interface. If the application ID is missing, the UI shows a configuration state and does not fall back to direct `window.ethereum` or MetaMask calls.
 
 Optional server-only `SEPOLIA_RPC_URL` and `ARC_RPC_URL` override public read RPCs. Never prefix credentials with `NEXT_PUBLIC_`; never configure the private position read token in the frontend. Contract addresses come from [canonical deployments](../deployments/canonical.json). Public status is read-only and unauthenticated because it returns public chain data, but production needs edge IP/global rate limits, request timeouts and budget controls to protect RPC access. No durable public-endpoint limiter is claimed here.
 

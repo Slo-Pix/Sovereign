@@ -32,7 +32,10 @@ Final state: Sepolia `SETTLED`, Arc `UNWOUND`, capital returned in full.
 Full record under the `rehearsal` key in [`deployments/canonical.json`](deployments/canonical.json).
 
 Throughout that run the policy thresholds were never published, and the safe
-observations that preceded the breach produced no onchain trace whatsoever.
+observations that preceded the breach produced no SAFE decision, report, or
+nonce-consuming transaction. Timing, public observations, and later enforcement
+effects can still reveal bounded information; this is not a claim of perfect
+threshold secrecy.
 
 **Scope of the claim.** This is real deployment, real wiring, real transactions
 and real state transitions on two public testnets, driven through the Chainlink
@@ -49,7 +52,7 @@ flowchart TD
     D["AgreementRegistry<br/>state = PENDING_VALIDATION"] --> E
     E["CRE workflow<br/>reads committed policy + private position feed"]
     E -->|"validation passes"| F["Decision report → receiver → sink<br/>state = ACTIVE"]
-    E -->|"position safe"| G["No report. No transaction.<br/>Nothing observable."]
+    E -->|"position safe"| G["No SAFE report.<br/>No nonce-consuming transaction."]
     E -->|"loss exceeds private threshold"| H["Breach report<br/>state = BREACHED"]
     F --> I["Relayer mirrors to Arc<br/>SovereignEscrow.lockAgreement"]
     H --> J["Relayer unwinds Arc escrow<br/>capital returned"]
