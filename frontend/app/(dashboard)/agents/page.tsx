@@ -1,129 +1,14 @@
 import Link from "next/link";
-import { Cpu } from "lucide-react";
-import { AGENTS } from "@/lib/mock-data";
+import { Activity, ArrowRight, Bot, Cpu } from "lucide-react";
+import canonical from "../../../../deployments/canonical.json";
+import { readLiveAgreement } from "@/lib/server/live-ledger";
+import { REGISTRY_STATES } from "@/lib/server/public-status";
 
-export default function AgentsPage() {
-  return (
-    <div className="space-y-unit-6">
-      {/* Header & Metrics */}
-      <section className="flex flex-col md:flex-row md:items-end justify-between border-b-2 border-on-surface pb-unit-5 gap-unit-4">
-        <div>
-          <div className="flex items-center gap-unit-2 mb-unit-1">
-            <span className="font-label-caps text-label-caps bg-on-surface text-surface-container-lowest px-unit-2 py-0.5 tracking-widest font-bold">
-              OVERVIEW ACTORS
-            </span>
-          </div>
-          <h1 className="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">
-            Agents Directory
-          </h1>
-          <p className="font-body-md text-body-md text-secondary mt-1">
-            Negotiating agents and their public capacity. No private strategy or policy is exposed.
-          </p>
-        </div>
-        <div className="flex items-center gap-unit-3">
-          <div className="border border-on-surface bg-surface-container-lowest px-unit-4 py-unit-2 flex flex-col items-center justify-center neo-shadow">
-            <div className="font-label-caps text-label-caps text-secondary font-bold">CAPITAL DEPLOYED</div>
-            <div className="font-code-md text-code-md font-bold text-on-surface">$1,420,000.00</div>
-          </div>
-          <div className="border border-on-surface bg-surface-container-lowest px-unit-4 py-unit-2 flex flex-col items-center justify-center neo-shadow">
-            <div className="font-label-caps text-label-caps text-secondary font-bold">DATA SOURCE</div>
-            <div className="font-code-md text-code-md font-bold text-primary">PUBLIC RECORD</div>
-          </div>
-        </div>
-      </section>
+export const dynamic = "force-dynamic";
 
-      {/* Agents Grid */}
-      <section className="grid grid-cols-1 xl:grid-cols-2 gap-unit-6">
-        {AGENTS.map((agent) => (
-          <div key={agent.id} className="bg-surface-container-lowest border-2 border-on-surface neo-shadow-lg flex flex-col">
-            {/* Agent Header */}
-            <div className="bg-surface-container-high border-b-2 border-on-surface p-unit-6 flex flex-col gap-unit-4">
-              <div className="flex justify-between items-start">
-                <div className="flex items-center gap-unit-4">
-                  <div className="w-16 h-16 bg-on-surface text-surface-container-lowest border-2 border-on-surface flex items-center justify-center font-headline-lg font-bold neo-shadow-sm">
-                    {agent.id}
-                  </div>
-                  <div>
-                    <h2 className="font-headline-sm text-headline-sm font-bold text-on-surface tracking-tight">
-                      {agent.name}
-                    </h2>
-                    <div className="font-code-sm text-code-sm text-primary font-semibold mt-0.5">
-                      {agent.ens}
-                    </div>
-                  </div>
-                </div>
-                <span className="font-label-caps text-label-caps font-bold px-unit-2 py-1 bg-[#E6F4EA] text-[#00875A] border border-on-surface">
-                  {agent.status}
-                </span>
-              </div>
-              <div className="bg-surface-container-lowest border border-on-surface p-unit-2 px-unit-3 flex items-center justify-between">
-                <span className="font-label-caps text-label-caps text-secondary uppercase font-bold">IDENTITY</span>
-                <span className="font-code-sm text-code-sm font-bold break-all text-on-surface">{agent.address}</span>
-              </div>
-            </div>
-
-            {/* Agent Body Data */}
-            <div className="p-unit-6 grid grid-cols-1 md:grid-cols-2 gap-unit-6 flex-1">
-              {/* Operational Mandate */}
-              <div className="flex flex-col gap-unit-4">
-                <h3 className="font-label-caps text-label-caps uppercase font-bold text-secondary tracking-widest border-b border-surface-container-highest pb-unit-2">
-                  ROLE
-                </h3>
-                <div className="space-y-unit-3">
-                  <div>
-                    <div className="font-label-caps text-label-caps text-secondary">PRIMARY ROLE</div>
-                    <div className="font-code-sm text-code-sm font-bold text-on-surface mt-0.5">{agent.role}</div>
-                  </div>
-                  <div>
-                    <div className="font-label-caps text-label-caps text-secondary">DELEGATION</div>
-                    <div className="font-code-sm text-code-sm font-bold text-on-surface mt-0.5">{agent.delegationContract}</div>
-                  </div>
-                  <div>
-                    <div className="font-label-caps text-label-caps text-secondary">CAPACITY</div>
-                    <div className="font-code-sm text-code-sm font-bold text-on-surface mt-0.5">{agent.executionCapacity}</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Cryptographic Footprint */}
-              <div className="flex flex-col gap-unit-4">
-                <h3 className="font-label-caps text-label-caps uppercase font-bold text-secondary tracking-widest border-b border-surface-container-highest pb-unit-2">
-                  NO CRYPTOGRAPHIC EVIDENCE
-                </h3>
-                <div className="space-y-unit-3">
-                  <div>
-                    <div className="font-label-caps text-label-caps text-secondary">HARDWARE ENVIRONMENT</div>
-                    <div className="font-code-sm text-code-sm font-bold text-on-surface mt-0.5 flex items-center gap-1">
-                      <Cpu size={14} strokeWidth={2.25} aria-hidden="true" />
-                      {agent.hardwareKey}
-                    </div>
-                  </div>
-                  <div>
-                    <div className="font-label-caps text-label-caps text-secondary">SIGNATURE SCHEME</div>
-                    <div className="font-code-sm text-code-sm font-bold text-on-surface mt-0.5">{agent.sigScheme}</div>
-                  </div>
-                  <div>
-                    <div className="font-label-caps text-label-caps text-secondary">ACTIVE AGREEMENT</div>
-                    <div className="font-code-sm text-code-sm font-bold text-primary mt-0.5 hover:underline">
-                      <Link href={`/agreements/${agent.activeAgreement.split(' ')[0].replace('#', '')}`}>
-                        {agent.activeAgreement}
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Agent Footer Action */}
-            <div className="bg-surface-container-low border-t-2 border-on-surface p-unit-4 flex items-center justify-between">
-              <span className="font-code-sm text-code-sm text-secondary">No heartbeat or agent connection.</span>
-              <Link href="/activity" className="px-unit-4 py-unit-2 bg-surface-container-lowest text-on-surface font-code-md text-code-md font-bold uppercase border-2 border-on-surface neo-shadow-sm neo-press hover:bg-surface-container">
-                View Activity
-              </Link>
-            </div>
-          </div>
-        ))}
-      </section>
-    </div>
-  );
+export default async function AgentsPage() {
+  let agreement: Awaited<ReturnType<typeof readLiveAgreement>> | null = null;
+  try { agreement = await readLiveAgreement(canonical.rehearsal.agreementId as `0x${string}`); } catch { agreement = null; }
+  const agents = agreement ? [{ name: "Treasury Agent", role: "Principal / proposer", address: agreement.principal, capacity: agreement.capital }, { name: "Strategy Agent", role: "Counterparty", address: agreement.counterparty, capacity: agreement.capital }] : [];
+  return <div className="space-y-unit-6"><section className="flex flex-col md:flex-row md:items-end justify-between border-b-2 border-on-surface pb-unit-5 gap-unit-4"><div><span className="font-label-caps text-label-caps bg-on-surface text-surface-container-lowest px-unit-2 py-0.5 tracking-widest font-bold">LIVE ACTORS</span><h1 className="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight mt-2">Agents Directory</h1><p className="font-body-md text-body-md text-secondary mt-1">Agent identities and agreement relationships read from the public registry.</p></div><div className="border border-on-surface bg-surface-container-lowest px-unit-4 py-unit-2 neo-shadow"><div className="font-label-caps text-label-caps text-secondary font-bold">IDENTITIES READ</div><div className="font-code-md text-code-md font-bold text-primary">{agents.length.toString().padStart(2, "0")}</div></div></section>{agreement ? <section className="grid grid-cols-1 xl:grid-cols-2 gap-unit-6">{agents.map((agent) => <article key={agent.address} className="bg-surface-container-lowest border-2 border-on-surface neo-shadow-lg"><header className="bg-surface-container-high border-b-2 border-on-surface p-unit-6"><div className="flex justify-between items-start gap-4"><div className="flex items-center gap-unit-4"><div className="w-14 h-14 bg-on-surface text-white flex items-center justify-center font-headline-sm font-bold"><Bot /></div><div><h2 className="font-headline-sm font-bold">{agent.name}</h2><div className="font-code-sm text-primary">{agent.role}</div></div></div><span className="font-label-caps border border-on-surface px-2 py-1">{REGISTRY_STATES[agreement.registryState]}</span></div><div className="mt-4 border border-on-surface bg-white p-3 font-code-sm break-all"><span className="text-secondary">IDENTITY · </span>{agent.address}</div></header><div className="p-unit-6 grid grid-cols-2 gap-4 font-code-sm"><div><div className="font-label-caps text-secondary">CAPITAL BOUND</div><strong>{(Number(agent.capacity) / 1_000_000).toLocaleString()} USDC</strong></div><div><div className="font-label-caps text-secondary">EVIDENCE</div><strong className="inline-flex items-center gap-1"><Cpu size={14} /> EIP-712 terms</strong></div></div><footer className="border-t-2 border-on-surface bg-surface-container-low p-4 flex justify-between items-center font-code-sm"><span className="inline-flex items-center gap-2"><Activity size={15} /> Registry participant</span><Link href={`/agreements/${agreement.id}`} className="inline-flex items-center gap-1 font-bold">VIEW AGREEMENT <ArrowRight size={14} /></Link></footer></article>)}</section> : <section className="border-2 border-on-surface bg-surface-container-lowest p-unit-6"><h2 className="font-headline-sm font-bold">No finalized agent identities available</h2><p className="text-secondary mt-2">The deployed agreement could not be read from both configured chains. No fixture identities are displayed.</p></section>}</div>;
 }
