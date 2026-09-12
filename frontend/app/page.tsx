@@ -49,8 +49,7 @@ export default function LandingPage() {
     <div className="bg-surface-container-low text-on-surface min-h-screen font-body-md">
       <header className="sticky top-0 z-30 border-b-2 border-on-surface bg-surface-container-low px-4 md:px-10 py-3 flex items-center justify-between gap-3">
         <Link href="/" className="flex items-center gap-3 font-headline-sm font-bold">
-          <span className="w-8 h-8 bg-on-surface text-surface-container-lowest flex items-center justify-center">S</span>
-          <span className="hidden sm:block">SOVEREIGN</span>
+          <img src="/logo.png" alt="Sovereign Logo" style={{ width: "120px", height: "120px" }} className="object-contain" />
         </Link>
         <p className="font-code-sm text-[10px] md:text-sm font-bold flex items-center gap-2">
           <span className="w-2 h-2 bg-primary-container border border-on-surface" aria-hidden />

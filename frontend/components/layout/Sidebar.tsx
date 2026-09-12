@@ -45,20 +45,9 @@ export default function Sidebar() {
       >
         <div className="flex flex-col">
           {/* Brand Header */}
-          <div className="p-unit-4 border-b-2 border-on-surface bg-surface-container-low flex items-center gap-unit-3 pl-14 lg:pl-4">
-            <div className="w-10 h-10 bg-on-surface text-surface-container-lowest flex items-center justify-center border-2 border-on-surface shrink-0"
-              style={{ boxShadow: "1px 1px 0px #1b1c19" }}>
-              <span className="font-code-md text-code-md font-bold text-xs">SOV</span>
-            </div>
-            <div>
-              <div className="font-headline-sm text-headline-sm font-bold text-on-surface tracking-tight">
-                SOVEREIGN
-              </div>
-              <div className="font-label-caps text-label-caps text-secondary uppercase tracking-wider">
-                Agreement Protocol
-              </div>
-            </div>
-          </div>
+          <Link href="/" className="p-unit-4 border-b-2 border-on-surface bg-surface-container-low flex items-center gap-unit-3 pl-14 lg:pl-4">
+            <img src="/logo.png" alt="Sovereign Logo" style={{ width: "120px", height: "120px" }} className="object-contain" />
+          </Link>
 
           {/* Navigation */}
           <nav aria-label="Sovereign Protocol pages" className="p-unit-3 flex flex-col gap-unit-1">
