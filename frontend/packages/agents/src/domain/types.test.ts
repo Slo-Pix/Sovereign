@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { assertActionableDecision, NonActionableDecisionError, type Decision, type ProtocolEvent } from "./types.js";
-import { sampleOffer, CAPITAL } from "../test/fixtures.js";
+import { assertActionableDecision, NonActionableDecisionError, type Decision, type ProtocolEvent } from "./types";
+import { sampleOffer, CAPITAL } from "../test/fixtures";
 
 describe("domain contracts", () => {
   it("separates address proposer from negotiation role in public events", () => {

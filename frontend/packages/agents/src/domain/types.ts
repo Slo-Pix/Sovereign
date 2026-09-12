@@ -3,7 +3,7 @@
 // Canonical public identifiers and registry terms come from protocol core.
 // ============================================================
 import type { Address, Hex } from "viem";
-import type { Offer as CoreOffer, OFFER_DOMAIN } from "../../../../../packages/core/src/index.js";
+import type { Offer as CoreOffer, OFFER_DOMAIN } from "../../../../../packages/core/src/index";
 
 // ─── PRIVACY MODEL ────────────────────────────────────────────
 //

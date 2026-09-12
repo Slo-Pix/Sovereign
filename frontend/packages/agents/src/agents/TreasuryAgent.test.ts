@@ -1,10 +1,10 @@
 import { afterEach, describe, it, expect, vi } from "vitest";
-import { TreasuryAgent } from "./TreasuryAgent.js";
-import { toCanonicalOfferMessage, verifyOfferSignature } from "../signing/Eip712OfferSigner.js";
+import { TreasuryAgent } from "./TreasuryAgent";
+import { toCanonicalOfferMessage, verifyOfferSignature } from "../signing/Eip712OfferSigner";
 import {
   treasuryConfig, treasurySigner, strategySigner, sampleOffer, DAY, DOMAIN, BINDING,
   OTHER_INTENT_ID, PRIVATE_MARKERS, serialize, CAPITAL,
-} from "../test/fixtures.js";
+} from "../test/fixtures";
 
 afterEach(() => vi.useRealTimers());
 describe("TreasuryAgent", () => {

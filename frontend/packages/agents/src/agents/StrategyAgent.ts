@@ -1,5 +1,5 @@
-import type { AgentIdentity, Offer, StrategyPrivatePolicy, SignedOffer, OfferSigner, NegotiationBinding } from "../domain/types.js";
-import { assertBoundOffer, assertSignedOffer, bindAgent } from "../domain/binding.js";
+import type { AgentIdentity, Offer, StrategyPrivatePolicy, SignedOffer, OfferSigner, NegotiationBinding } from "../domain/types";
+import { assertBoundOffer, assertSignedOffer, bindAgent } from "../domain/binding";
 
 export type StrategyConcessionSchedule = {
   round: number;

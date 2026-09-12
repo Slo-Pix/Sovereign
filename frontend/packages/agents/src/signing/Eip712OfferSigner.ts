@@ -3,10 +3,10 @@ import { privateKeyToAccount, type PrivateKeyAccount } from "viem/accounts";
 import {
   OFFER_DOMAIN, OFFER_TYPES, offerDigest, offerFromTerms,
   type Terms,
-} from "../../../../../packages/core/src/index.js";
+} from "../../../../../packages/core/src/index";
 import type {
   Offer, SignedOffer, OfferSigner, CanonicalOfferTerms, NegotiationBinding,
-} from "../domain/types.js";
+} from "../domain/types";
 
 export const SOVEREIGN_OFFER_PRIMARY_TYPE = "Offer" as const;
 export const SOVEREIGN_OFFER_EIP712_TYPES = OFFER_TYPES;

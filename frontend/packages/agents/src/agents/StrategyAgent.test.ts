@@ -1,10 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { StrategyAgent } from "./StrategyAgent.js";
-import { toCanonicalOfferMessage, verifyOfferSignature } from "../signing/Eip712OfferSigner.js";
+import { StrategyAgent } from "./StrategyAgent";
+import { toCanonicalOfferMessage, verifyOfferSignature } from "../signing/Eip712OfferSigner";
 import {
   strategyConfig, treasurySigner, strategySigner, sampleOffer, DAY, DOMAIN, BINDING,
   OTHER_INTENT_ID, PRIVATE_MARKERS, serialize,
-} from "../test/fixtures.js";
+} from "../test/fixtures";
 
 describe("StrategyAgent", () => {
   it.each([

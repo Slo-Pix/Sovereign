@@ -2,16 +2,16 @@ import { describe, it, expect } from "vitest";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { hashTypedData, verifyTypedData, type Address, type Hex } from "viem";
-import { OFFER_DOMAIN, OFFER_TYPES, offerDigest, offerFromTerms, hashTerms, type Terms } from "../../../../../packages/core/src/index.js";
+import { OFFER_DOMAIN, OFFER_TYPES, offerDigest, offerFromTerms, hashTerms, type Terms } from "../../../../../packages/core/src/index";
 import {
   Eip712OfferSigner, verifyOfferSignature, hashOfferTypedData,
   toCanonicalOfferMessage, toRegistryTerms, SOVEREIGN_OFFER_EIP712_TYPES,
-} from "./Eip712OfferSigner.js";
-import type { Offer } from "../domain/types.js";
+} from "./Eip712OfferSigner";
+import type { Offer } from "../domain/types";
 import {
   BINDING, DOMAIN, KEY_A, OTHER_INTENT_ID, treasurySigner, strategySigner,
   sampleOffer, serialize, PRIVATE_MARKERS,
-} from "../test/fixtures.js";
+} from "../test/fixtures";
 
 describe("canonical EIP-712 signing", () => {
   it("matches the actual core fixture digest, message and eight-field terms hash", () => {

@@ -1,10 +1,10 @@
 // PUBLIC SYNTHETIC TEST IDENTITIES ONLY. Never fund these accounts or use these
 // deterministic keys/policy salts for an actual agreement.
 import type { Hex } from "viem";
-import { Eip712OfferSigner } from "../signing/Eip712OfferSigner.js";
-import type { NegotiationBinding, Offer } from "../domain/types.js";
-import type { TreasuryAgentConfig } from "../agents/TreasuryAgent.js";
-import type { StrategyAgentConfig } from "../agents/StrategyAgent.js";
+import { Eip712OfferSigner } from "../signing/Eip712OfferSigner";
+import type { NegotiationBinding, Offer } from "../domain/types";
+import type { TreasuryAgentConfig } from "../agents/TreasuryAgent";
+import type { StrategyAgentConfig } from "../agents/StrategyAgent";
 
 export const KEY_A = `0x${"1".padStart(64, "0")}` as Hex;
 export const KEY_B = `0x${"2".padStart(64, "0")}` as Hex;

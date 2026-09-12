@@ -1,6 +1,6 @@
 import { isAddress, zeroAddress } from "viem";
-import type { AgentIdentity, NegotiationBinding, Offer, OfferSigner, SignedOffer } from "./types.js";
-import { canonicalOfferDomain, toRegistryTerms, verifyOfferSignature } from "../signing/Eip712OfferSigner.js";
+import type { AgentIdentity, NegotiationBinding, Offer, OfferSigner, SignedOffer } from "./types";
+import { canonicalOfferDomain, toRegistryTerms, verifyOfferSignature } from "../signing/Eip712OfferSigner";
 
 export function bindAgent(binding: NegotiationBinding, identity: AgentIdentity, signer: OfferSigner, role: "PROPOSER" | "COUNTERPARTY") {
   if (!/^0x[0-9a-fA-F]{64}$/.test(binding.intentId) ||

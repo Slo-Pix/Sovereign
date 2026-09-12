@@ -1,8 +1,8 @@
-import type { TreasuryAgent } from "../agents/TreasuryAgent.js";
-import type { StrategyAgent } from "../agents/StrategyAgent.js";
-import type { NegotiationRun, ProtocolEvent, FinalTerms, SignedOffer } from "../domain/types.js";
-import { assertBoundOffer } from "../domain/binding.js";
-import { hashOfferTypedData, verifyOfferSignature } from "../signing/Eip712OfferSigner.js";
+import type { TreasuryAgent } from "../agents/TreasuryAgent";
+import type { StrategyAgent } from "../agents/StrategyAgent";
+import type { NegotiationRun, ProtocolEvent, FinalTerms, SignedOffer } from "../domain/types";
+import { assertBoundOffer } from "../domain/binding";
+import { hashOfferTypedData, verifyOfferSignature } from "../signing/Eip712OfferSigner";
 
 export type EngineConfig = {
   runId: string;

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, GitBranch } from "lucide-react";
 import { NEGOTIATION_ROUNDS } from "@/lib/mock-data";
+import AutonomousAgentRun from "@/components/agents/AutonomousAgentRun";
 
 export default function NegotiationPage() {
   return (
@@ -34,6 +35,8 @@ export default function NegotiationPage() {
           </div>
         </div>
       </section>
+
+      <AutonomousAgentRun />
 
       {/* Economic Actors Bar */}
       <section className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-center gap-unit-4">

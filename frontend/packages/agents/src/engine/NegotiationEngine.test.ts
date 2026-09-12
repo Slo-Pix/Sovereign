@@ -1,15 +1,15 @@
 import { afterEach, describe, it, expect, vi } from "vitest";
 import { verifyTypedData } from "viem";
-import { OFFER_DOMAIN, OFFER_TYPES, offerFromTerms, offerDigest, hashTerms } from "../../../../../packages/core/src/index.js";
-import { NegotiationEngine } from "./NegotiationEngine.js";
-import { TreasuryAgent } from "../agents/TreasuryAgent.js";
-import { StrategyAgent } from "../agents/StrategyAgent.js";
-import { Eip712OfferSigner, hashOfferTypedData, toRegistryTerms } from "../signing/Eip712OfferSigner.js";
-import type { Offer, ProtocolEvent } from "../domain/types.js";
+import { OFFER_DOMAIN, OFFER_TYPES, offerFromTerms, offerDigest, hashTerms } from "../../../../../packages/core/src/index";
+import { NegotiationEngine } from "./NegotiationEngine";
+import { TreasuryAgent } from "../agents/TreasuryAgent";
+import { StrategyAgent } from "../agents/StrategyAgent";
+import { Eip712OfferSigner, hashOfferTypedData, toRegistryTerms } from "../signing/Eip712OfferSigner";
+import type { Offer, ProtocolEvent } from "../domain/types";
 import {
   treasuryConfig, strategyConfig, treasurySigner, strategySigner, sampleOffer,
   DAY, CAPITAL, DOMAIN, BINDING, KEY_B, OTHER_INTENT_ID, PRIVATE_MARKERS, serialize, SALT_A,
-} from "../test/fixtures.js";
+} from "../test/fixtures";
 
 function makeEngine(maxRounds = 20) {
   const treasury = new TreasuryAgent(treasuryConfig({ initialOfferNonce: 41n }));
