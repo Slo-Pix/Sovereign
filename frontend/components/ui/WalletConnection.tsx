@@ -11,17 +11,21 @@ function shortAddress(address: string): string {
 
 function MissingPrivyConfiguration() {
   return (
-    <div className="relative font-code-sm text-code-sm">
+    <div className="group relative font-code-sm text-code-sm">
       <button
         type="button"
         disabled
-        title="Configure NEXT_PUBLIC_PRIVY_APP_ID to enable wallet connection"
-        className="border-2 border-on-surface bg-on-surface text-surface-container-lowest px-3 py-2 neo-shadow disabled:opacity-50"
+        title="Set NEXT_PUBLIC_PRIVY_APP_ID in .env.local, then rebuild and restart the frontend"
+        aria-describedby="wallet-config-hint"
+        className="border-2 border-on-surface bg-on-surface text-surface-container-lowest px-3 py-2 neo-shadow disabled:opacity-50 peer"
       >
         Wallet unavailable
       </button>
-      <p role="alert" className="absolute right-0 top-full mt-2 w-72 max-w-[80vw] border-2 border-on-surface bg-surface-container-lowest p-3 text-on-surface neo-shadow">
-        Privy wallet connection is not configured. Set NEXT_PUBLIC_PRIVY_APP_ID and restart the frontend.
+      <p
+        id="wallet-config-hint"
+        className="pointer-events-none invisible absolute right-0 top-full z-40 mt-2 w-72 max-w-[80vw] border-2 border-on-surface bg-surface-container-lowest p-3 text-on-surface opacity-0 transition-opacity duration-150 neo-shadow group-hover:visible group-hover:opacity-100 peer-focus-visible:visible peer-focus-visible:opacity-100"
+      >
+        Wallet connection is not configured. Set NEXT_PUBLIC_PRIVY_APP_ID in <code>.env.local</code>, then rebuild and restart the frontend.
       </p>
     </div>
   );

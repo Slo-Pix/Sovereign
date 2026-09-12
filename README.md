@@ -324,6 +324,8 @@ See [deployment and verification requirements](packages/cre/scripts/CHAIN_VERIFI
 - [`packages/cre/README.md`](packages/cre/README.md) — workflow behaviour, simulator metadata identity, and the private position-feed contract
 - [`packages/position-feed/README.md`](packages/position-feed/README.md) — credential provisioning and the read-only public gateway
 - [`packages/relayer/README.md`](packages/relayer/README.md) — finality, reorg and recovery rules
+- [`packages/protocol-ops/README.md`](packages/protocol-ops/README.md) — owner readiness checks and dry-run-first reconciliation
+- [`frontend/README.md`](frontend/README.md) — wallet configuration and public status API
 
 ## Dependencies
 

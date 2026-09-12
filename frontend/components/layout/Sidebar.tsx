@@ -65,7 +65,7 @@ export default function Sidebar() {
           <Link
             href="/"
             aria-label="Sovereign home"
-            className="h-[74px] px-unit-4 border-b-2 border-on-surface bg-surface-container-low flex items-center pl-14 lg:pl-4"
+            className="h-[74px] px-unit-4 border-b-2 border-on-surface bg-surface-container-low flex items-center justify-center pl-12 lg:pl-unit-4"
           >
             <Image
               src="/logo.png"
@@ -123,9 +123,9 @@ export default function Sidebar() {
             </span>
             <span className="font-bold">READY</span>
           </div>
-          <div className="mt-unit-1 p-unit-2.5 bg-surface-container border border-on-surface flex items-start gap-unit-2">
-            <ShieldCheck size={14} className="mt-0.5 shrink-0 text-electric-blue" aria-hidden="true" />
-            <div className="font-label-caps text-label-caps text-secondary uppercase">Public status reads live contract state</div>
+          <div className="mt-unit-1 px-unit-2 py-unit-2 bg-surface-container border border-on-surface flex items-center gap-unit-2">
+            <ShieldCheck size={14} className="shrink-0 text-electric-blue" aria-hidden="true" />
+            <div className="font-label-caps text-label-caps text-secondary uppercase leading-snug">Public status reads live contract state</div>
           </div>
         </div>
       </aside>

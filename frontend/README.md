@@ -7,7 +7,7 @@ Use **Node 22** for production builds. Bun can run agent tests but Bun 1.3.13's 
 - Agent EIP-712 signing imports core's canonical seven-field type and digest. `proposer` is the counterparty address; `proposerRole` is unsigned negotiation metadata. Both agents require `{intentId,principal,counterparty}` binding and second-based durations. Final terms retain expiry and offer nonce, separate from decision nonce.
 - The wallet button uses Privy's wallet connection modal only on explicit click. It restores/displays the connected account through Privy and does not request a signature, transaction, or protocol authorization.
 - `/monitoring` accepts an actual bytes32 agreement ID and reads `/api/agreements/:id/status`. The server reads finalized Sepolia/Arc blocks and returns only public state/block numbers. Errors do not fall back to mock data. No private position endpoint or token is exposed to the browser.
-- Other dashboard pages are explicitly labeled synthetic examples. Their fixture status/address/metrics are not evidence of live transactions, verification, ZK proofs or TEE execution. Private policy inputs and SAFE history are not collected/displayed.
+- Opening an agreement by its bytes32 identifier reads live contract state on both chains; other dashboard pages render public terms only. No page displays private policy inputs, position readings or SAFE history, and none of them claims ZK proofs or TEE execution.
 
 ## Server configuration and checks
 
@@ -20,6 +20,15 @@ cp .env.example .env.local
 # edit .env.local and set NEXT_PUBLIC_PRIVY_APP_ID
 npm run dev
 ```
+
+`NEXT_PUBLIC_*` values are inlined into the bundle at build time, so a production server does not pick up a change on restart alone:
+
+```bash
+NEXT_PUBLIC_PRIVY_APP_ID=your-app-id npm run build
+npm run start
+```
+
+A value exported only in the shell before `npm run start` has no effect; it must be present during `npm run build`, or in `.env.local` when running `npm run dev`.
 
 The frontend intentionally keeps embedded-wallet creation disabled. Privy is used for wallet connection and account display only; transaction and signing flows remain disabled in this read-only interface. If the application ID is missing, the UI shows a configuration state and does not fall back to direct `window.ethereum` or MetaMask calls.
 
