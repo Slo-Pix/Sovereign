@@ -41,7 +41,3 @@ export async function readLiveAgreement(id: Hex): Promise<LiveAgreement> {
   if (!REGISTRY_STATES[registryState] || !ESCROW_STATES[escrowState]) throw new Error("Unknown public state");
   return { id: agreement[0], intentId: agreement[1], principal: agreement[2], counterparty: agreement[3], capital: agreement[4], duration: agreement[5], yieldBps: agreement[6], termsHash: agreement[7], policyCommitment: agreement[8], registryState, escrowState, sepoliaBlock: source.number, arcBlock: destination.number };
 }
-
-export function liveRehearsal(): LiveAgreement | null {
-  return null;
-}
