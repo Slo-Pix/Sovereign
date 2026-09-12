@@ -67,6 +67,36 @@ The privacy property comes from three choices working together:
    would. This is enforced twice: sender-side before report generation, and
    contract-side as `NonActionableDecision`.
 
+### The enforced path, step by step
+
+**Agreement creation.** A principal creates an intent through `IntentRegistry`
+carrying public bounds plus the policy commitment. A signed seven-field canonical
+offer is proposed through `AgreementRegistry`, which binds terms, participants,
+capital, expiry and nonce, then moves the agreement to `PENDING_VALIDATION`.
+
+**Confidential evaluation.** The workflow reads public agreement state and
+authenticated position data. Private policy values and the salt are retrieved
+only inside the handler. Ordinary rejection and commitment failure return the
+same public result, so a failed match reveals nothing extra.
+
+**Decision delivery.** An actionable decision becomes a report delivered to
+`CREDecisionReceiver`, which checks the forwarder, workflow identity, owner,
+report schema, derived decision ID and nonce before calling `DecisionSink`. The
+sink then applies replay, state, decision-kind and terminal-state guards.
+
+**Cross-chain settlement.** The relayer reads *finalized* Sepolia
+`DecisionRecorded` events, verifies agreement binding, nonce, decision ID and
+reorg safety, then locks or unwinds Arc escrow. Owner reconciliation separately
+advances the Sepolia registry from `UNWIND` to `SETTLED`. The relayer is an
+explicitly trusted EOA transport, not a trustless bridge.
+
+**Position-feed boundary.** The feed stores only scoped token hashes and exact
+four-field observations. Read and write credentials are separate,
+agreement-bound, rotatable, revocable and quota-limited. For demos the full
+service stays private on loopback and only a read-only gateway is exposed, which
+serves `GET /health` and bearer-authenticated position reads and forwards no
+write or administrative route.
+
 ## Repository structure
 
 The project is organised as three workflows.
@@ -236,7 +266,7 @@ See [deployment and verification requirements](packages/cre/scripts/CHAIN_VERIFI
 ## Integration packages
 
 - [CRE workflows and evidence](packages/cre/README.md): confidential-handler registration, private-feed reads, breach-only reports and local two-chain verification.
-- [Authenticated position provider](packages/position-feed/README.md): durable agreement-scoped read/write credentials, observations and quotas; simulated-position service, not a real venue oracle.
+- [Authenticated position provider](packages/position-feed/README.md): durable agreement-scoped read/write credentials, observations and quotas, plus a read-only public gateway for tunnelled demos; simulated-position service, not a real venue oracle.
 - [Trusted Sepolia → Arc relayer](packages/relayer/README.md): finalized source events, persistent recovery and receipt-verified escrow actions. Default is read-only; not a cryptographic bridge.
 - [Owner operations](packages/protocol-ops/README.md): read-only readiness checks and dry-run-first reconciliation gated on finalized source and confirmation-qualified destination receipts.
 - [Frontend](frontend/README.md): canonical agent signing, real wallet account connection and public finalized-state reads. Fixture pages remain explicitly synthetic.
