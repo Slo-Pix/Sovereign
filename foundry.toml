@@ -4,6 +4,8 @@ test = "contracts/test"
 out = "out"
 cache_path = "cache"
 solc_version = "0.8.30"
+# Pinned to match the deployed bytecode; newer Foundry defaults to osaka and would diverge.
+evm_version = "prague"
 optimizer = true
 optimizer_runs = 200
 via_ir = false

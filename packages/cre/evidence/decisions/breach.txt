@@ -3,11 +3,11 @@ Scenario: breach
 ✓ Workflow compiled
 ✓ Simulation limits enabled
   HTTP: req=120kb resp=250kb timeout=10s | ConfHTTP: req=125kb resp=500kb timeout=1m30s | Consensus obs=25kb | ChainWrite evm_report=50kb evm_gas=10000000 solana_report=265b solana_cu=300000 | WASM binary=100mb compressed=20mb
-  Binary hash: 14b3bfb7d0d2404ce2a5f6f2cefba52903d74fe4f2935bef3841d4e6869b6b17
-  Config hash: 9f4afc2dd881d261a41a240119c67f9e41ef425179ec448a997680354648289e
-2026-09-10T01:53:14Z [SIMULATION] Simulator Initialized
+  Binary hash: 0c80ffc273c1ac30990e649723b55144da1276df4ec6178342dd492a30516488
+  Config hash: 83d10493b945bce2e136eed5aeb209b53262764a7ece1557ac5ca98202d56c98
+2026-09-11T20:49:33Z [SIMULATION] Simulator Initialized
 
-2026-09-10T01:53:14Z [SIMULATION] Running trigger trigger=cron-trigger@1.0.0
+2026-09-11T20:49:33Z [SIMULATION] Running trigger trigger=cron-trigger@1.0.0
 ╭────────────────────────────────────────────────────────────────────────────────────────────────────╮
 │ Trigger requested TEE Execution your trigger will run in one of the following Tees:                │
 │     - AWS Nitro in us-west-2                                                                       │
@@ -22,8 +22,8 @@ Scenario: breach
 ✓ Workflow Simulation Result:
 "{\"evidenceMode\":\"SIMULATION_SYNTHETIC_STATE_NOT_A_TEE\",\"scenario\":\"breach\",\"reportsGenerated\":1,\"decision\":{\"agreementId\":\"0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"decisionId\":\"0x27c1f86ee3536bb221e592432902afe9ad69450bf6adabd7d88aba0153dafcd5\",\"checkKind\":2,\"result\":true,\"decisionNonce\":\"2\",\"delivery\":\"report-only\"}}"
 
-2026-09-10T01:53:14Z [SIMULATION] Execution finished signal received
-2026-09-10T01:53:14Z [SIMULATION] Skipping WorkflowEngineV2
+2026-09-11T20:49:33Z [SIMULATION] Execution finished signal received
+2026-09-11T20:49:33Z [SIMULATION] Skipping WorkflowEngineV2
 
 ╭──────────────────────────────────────────────────────╮
 │ Simulation complete! Ready to deploy your workflow?  │
@@ -33,6 +33,5 @@ Scenario: breach
 
 Initializing...
 Loading settings...
-! Using default private key for chain write simulation. To use your own key, set CRE_ETH_PRIVATE_KEY in your .env file or system environment.
 Checking RPC connectivity...
 Compiling workflow...

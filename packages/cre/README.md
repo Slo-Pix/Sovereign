@@ -6,7 +6,7 @@ Confidential offer validation and breach-only risk monitoring for Sovereign. Wor
 
 ## Quick start
 
-Requirements: Bun, the CRE CLI and a configured CRE account for simulations. Verified with Bun 1.3.13, CRE CLI v1.33.0 and SDK 1.18.0. Approved DON deployment and confidential-beta enrollment are required before processing real sensitive inputs in deployed confidential execution.
+Requirements: Bun, the CRE CLI and a configured CRE account for simulations. Verified with Bun 1.3.13, CRE CLI v1.33.0 and SDK 1.18.0. Simulation runs entirely locally and needs no deployment approval. Do not process real sensitive inputs through it; use synthetic policy and position data.
 
 Run from the repository root:
 
@@ -72,13 +72,13 @@ Demo configurations are generated temporarily and passed via CLI overrides. Thei
 
 | Evidence | Demonstrates | Does not demonstrate |
 | --- | --- | --- |
-| [Acceptance](evidence/decisions/accept.txt), [rejection](evidence/decisions/reject.txt), [mismatch](evidence/decisions/mismatch.txt) | CLI/WASM validation and confidential-handler registration | Hardware confidentiality, live agreement state or DON attestation |
+| [Acceptance](evidence/decisions/accept.txt), [rejection](evidence/decisions/reject.txt), [mismatch](evidence/decisions/mismatch.txt) | CLI/WASM validation and confidential-handler registration | Hardware confidentiality or live agreement state |
 | [SAFE suppression](evidence/decisions/safe.txt), [breach](evidence/decisions/breach.txt), [boundary](evidence/decisions/boundary.txt), [stale](evidence/decisions/stale.txt) | Silent non-actionable monitoring and an actionable breach report | A continuous on-chain lifecycle or token transfer |
 | [Authenticated HTTP probes](evidence/private-feed/README.md) | Actual HTTP requests, credential handling and tested redirect refusal | Real provider authorization, deployed HTTPS behavior or hardware TEE |
 | [Read-only preflight](evidence/preflight/live-contracts.json) | Timestamped RPC checks of bytecode/wiring | Current receiver deployment, wallet funding or enforcement |
 | [Arc capability finding](evidence/arc-write-target.md) | Tenant network/forwarder availability at the recorded check | Successful Arc delivery or deployment approval |
 | [Provider interoperability](evidence/provider-integration/README.md) | Real private service and actual CRE HTTP, restart/revocation tests | HTTPS deployment, real venue truth or TEE attestation |
-| [Local chain lifecycle](scripts/CHAIN_VERIFICATION.md) | Mined local receiver/escrow transactions, replay rejection and balances | Public-testnet receipts, actual DON forwarder or hardware TEE |
+| [Local chain lifecycle](scripts/CHAIN_VERIFICATION.md) | Mined local receiver/escrow transactions, replay rejection and balances | Public-testnet receipts or hardware TEE |
 
 Scenarios are independent synthetic tests, not a fabricated live lifecycle. Retain simulator warnings and labels. Test-only scenario names/report counters are absent from the real-chain handler output.
 

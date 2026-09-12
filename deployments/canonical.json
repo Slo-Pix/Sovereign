@@ -12,7 +12,7 @@
     "creConfigDerivedWorkflowHash": "0x0082c14e71ee1ad74670fe0f9a35bb79726b7f0bdff4e43a948bb25799349826",
     "creDeliveryMode": "simulation-broadcast-mock-forwarder",
     "verified": true,
-    "creReportReceiverVerified": false,
+    "creReportReceiverVerified": true,
     "explorer": "https://sepolia.etherscan.io"
   },
   "arcTestnet": {

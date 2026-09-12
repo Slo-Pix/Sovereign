@@ -3,11 +3,11 @@ Scenario: mismatch
 ✓ Workflow compiled
 ✓ Simulation limits enabled
   HTTP: req=120kb resp=250kb timeout=10s | ConfHTTP: req=125kb resp=500kb timeout=1m30s | Consensus obs=25kb | ChainWrite evm_report=50kb evm_gas=10000000 solana_report=265b solana_cu=300000 | WASM binary=100mb compressed=20mb
-  Binary hash: 14b3bfb7d0d2404ce2a5f6f2cefba52903d74fe4f2935bef3841d4e6869b6b17
-  Config hash: 1e84a7901b5f6fa759236fe4ea3864cf83287979f0bee29548f21d43a0a03768
-2026-09-10T01:52:53Z [SIMULATION] Simulator Initialized
+  Binary hash: 0c80ffc273c1ac30990e649723b55144da1276df4ec6178342dd492a30516488
+  Config hash: e942f49e114df8db40225c3f4d687f068b155a7e7364f3c154099a57c7532dbe
+2026-09-11T20:48:34Z [SIMULATION] Simulator Initialized
 
-2026-09-10T01:52:53Z [SIMULATION] Running trigger trigger=cron-trigger@1.0.0
+2026-09-11T20:48:34Z [SIMULATION] Running trigger trigger=cron-trigger@1.0.0
 ╭────────────────────────────────────────────────────────────────────────────────────────────────────╮
 │ Trigger requested TEE Execution your trigger will run in one of the following Tees:                │
 │     - AWS Nitro in us-west-2                                                                       │
@@ -22,8 +22,8 @@ Scenario: mismatch
 ✓ Workflow Simulation Result:
 "{\"evidenceMode\":\"SIMULATION_SYNTHETIC_STATE_NOT_A_TEE\",\"scenario\":\"mismatch\",\"reportsGenerated\":1,\"decision\":{\"agreementId\":\"0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb\",\"decisionId\":\"0x87e3286f55fe97c8e38bb582718444c6142dcf1f4c1edc44159337b52955ce99\",\"checkKind\":1,\"result\":false,\"decisionNonce\":\"1\",\"delivery\":\"report-only\"}}"
 
-2026-09-10T01:52:53Z [SIMULATION] Execution finished signal received
-2026-09-10T01:52:53Z [SIMULATION] Skipping WorkflowEngineV2
+2026-09-11T20:48:35Z [SIMULATION] Execution finished signal received
+2026-09-11T20:48:35Z [SIMULATION] Skipping WorkflowEngineV2
 
 ╭──────────────────────────────────────────────────────╮
 │ Simulation complete! Ready to deploy your workflow?  │
@@ -33,6 +33,7 @@ Scenario: mismatch
 
 Initializing...
 Loading settings...
-! Using default private key for chain write simulation. To use your own key, set CRE_ETH_PRIVATE_KEY in your .env file or system environment.
 Checking RPC connectivity...
+! Some RPCs in settings are not functioning properly, please check: RPC health check failed:                                     
+[ethereum-testnet-sepolia] failed RPC health check: Post "https://ethereum-sepolia-rpc.publicnode.com": context deadline exceeded
 Compiling workflow...

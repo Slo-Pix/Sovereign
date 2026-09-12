@@ -10,15 +10,16 @@
 2. **Workflow 2:** confidential CRE evaluation, decision delivery, private position-feed consumption, and Sepolia-to-Arc relaying.
 3. **Workflow 3:** agent negotiation, canonical offer signing, position simulation/provider operations, and the frontend.
 
-# Simulation Path: Remaining Tasks
+# Remaining Tasks
 
-This is the selected path. Everything below must be done.
+Simulation is the delivery path. Simulation runs entirely locally and is what Chainlink judges for bounties, so no deployment access is required and nothing here waits on approval.
 
 ### Workflow 1
 
-- Complete explorer verification for the deployed receiver and retain the ABI revision, wiring transactions, and receipts. Confirm `evmVersion` from the compiled artifact metadata rather than assuming a default, because `foundry.toml` does not pin `evm_version`.
 - Review and approve the shared ABI, privacy, frontend, and cross-team changes.
 - Decide whether ENS authorization is retained. If retained, add and deploy a real registry authorization hook; a displayed ENS name alone is not permission enforcement.
+
+**Note on rebuilding the receiver.** The deployed bytecode was compiled with `evm_version = prague`, which `foundry.toml` now pins explicitly. Current Foundry defaults to `osaka`, which produces different bytecode, so do not remove that pin.
 
 ### Workflow 2
 
@@ -44,40 +45,16 @@ This is the selected path. Everything below must be done.
 
 The relayer requires `eth_getLogs` ranges wider than ten blocks and uses `retryCount: 0`. Free-tier Alchemy endpoints cap `eth_getLogs` at a ten-block range and can exceed the client timeout on a cold connection, which surfaces as the generic non-checkpointed failure message rather than a specific error. Use endpoints without that cap, keep `DESTINATION_START_BLOCK` close to the destination head, and wrap `main()` when a specific diagnostic is needed.
 
-# If DON: Additional Tasks
-
-Not required for the demo. These apply only if approved DON deployment is later pursued, and they are gated on Chainlink approval. They are additions to the simulation tasks above, not replacements.
-
-### Workflow 1
-
-- Redeploy `CREDecisionReceiver` bound to the real DON forwarder, workflow ID, and workflow owner. The existing receiver is bound to the simulator's fixed metadata identity and must not be reused.
-- Have the DecisionSink owner call `setForwarder` on the new receiver and run the receiver preflight.
-- Execute one validation and breach rehearsal against the new receiver.
-
-### Workflow 2
-
-- Obtain deployment access for the organization, then link an owner key and fund it.
-- Create the production configuration with `delivery: 'sepolia'` and provision secrets through the CRE secret-management flow rather than `.env`.
-- Deploy and activate the workflow, then record the resulting workflow ID and owner and hand both to Workflow 1.
-
-### Workflow 3
-
-- Host the position feed behind a public HTTPS origin with external edge limits, no redirects, and dedicated persistent private storage. A DON cannot reach the loopback origin used by the simulation run. Scoped read/write credential provisioning is already implemented in `packages/protocol-ops/src/provision-feed.ts`; only the public origin is missing.
-
-### Cross-Workflow
-
-- Re-run the authenticated-position-observation gate against the hosted origin. It is met on the simulation path via credential-bound loopback observations under `delivery: 'simulation-sepolia'`, but reopens under DON.
-
 ## Standing Constraints
 
 These are not tasks, but they bound every claim made about the system.
 
 - The relayer is a trusted EOA transport, not a trustless bridge. Finality delays, reorg handling, non-atomicity, and operator key custody remain operational risks.
-- The CRE binary is visible to the DON; only confidential input data and derived private policy values stay inside the enclave.
 - Exact threshold secrecy is not claimed. Timing, repeated observations, public inputs, the absence of decisions, and validation behavior can create residual inference.
-- Mock-forwarder execution is real public-testnet execution, but it is not DON consensus and not hardware TEE attestation. It must never be described as either.
+- The workflow binary is not secret; only confidential input data and derived private policy values stay inside the enclave.
+- Mock-forwarder execution is real public-testnet execution, but it is not decentralized-oracle-network consensus and not hardware TEE attestation. It must never be described as either.
 
 ## Evidence
 
-Verified public-testnet rehearsal transaction hashes, block numbers, and final states are recorded in `deployments/canonical.json` under `rehearsal`. Deployment identities and the simulator-versus-DON identity distinction are in `packages/cre/INTEGRATION.md`.
+Verified public-testnet rehearsal transaction hashes, block numbers, and final states are recorded in `deployments/canonical.json` under `rehearsal`. Deployment identities and the simulator metadata identity values are explained in `packages/cre/INTEGRATION.md`.
 

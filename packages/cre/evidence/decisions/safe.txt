@@ -3,11 +3,11 @@ Scenario: safe
 ✓ Workflow compiled
 ✓ Simulation limits enabled
   HTTP: req=120kb resp=250kb timeout=10s | ConfHTTP: req=125kb resp=500kb timeout=1m30s | Consensus obs=25kb | ChainWrite evm_report=50kb evm_gas=10000000 solana_report=265b solana_cu=300000 | WASM binary=100mb compressed=20mb
-  Binary hash: 14b3bfb7d0d2404ce2a5f6f2cefba52903d74fe4f2935bef3841d4e6869b6b17
-  Config hash: 05a8dafab87ec99e706c2ab621edf1819052b713882c5fa6acb3fbf45cae43e2
-2026-09-10T01:53:04Z [SIMULATION] Simulator Initialized
+  Binary hash: 0c80ffc273c1ac30990e649723b55144da1276df4ec6178342dd492a30516488
+  Config hash: a231d403bd943b32aade6889f2e18bd789c27f51ff6110ba24f73c4a32fe345d
+2026-09-11T20:49:10Z [SIMULATION] Simulator Initialized
 
-2026-09-10T01:53:04Z [SIMULATION] Running trigger trigger=cron-trigger@1.0.0
+2026-09-11T20:49:10Z [SIMULATION] Running trigger trigger=cron-trigger@1.0.0
 ╭────────────────────────────────────────────────────────────────────────────────────────────────────╮
 │ Trigger requested TEE Execution your trigger will run in one of the following Tees:                │
 │     - AWS Nitro in us-west-2                                                                       │
@@ -22,8 +22,8 @@ Scenario: safe
 ✓ Workflow Simulation Result:
 "{\"evidenceMode\":\"SIMULATION_SYNTHETIC_STATE_NOT_A_TEE\",\"scenario\":\"safe\",\"reportsGenerated\":0,\"decision\":null}"
 
-2026-09-10T01:53:04Z [SIMULATION] Execution finished signal received
-2026-09-10T01:53:04Z [SIMULATION] Skipping WorkflowEngineV2
+2026-09-11T20:49:10Z [SIMULATION] Execution finished signal received
+2026-09-11T20:49:10Z [SIMULATION] Skipping WorkflowEngineV2
 
 ╭──────────────────────────────────────────────────────╮
 │ Simulation complete! Ready to deploy your workflow?  │
@@ -33,6 +33,5 @@ Scenario: safe
 
 Initializing...
 Loading settings...
-! Using default private key for chain write simulation. To use your own key, set CRE_ETH_PRIVATE_KEY in your .env file or system environment.
 Checking RPC connectivity...
 Compiling workflow...

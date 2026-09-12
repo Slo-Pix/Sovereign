@@ -7,11 +7,11 @@ Credential reached redirect target: false
 ✓ Workflow compiled
 ✓ Simulation limits enabled
   HTTP: req=120kb resp=250kb timeout=10s | ConfHTTP: req=125kb resp=500kb timeout=1m30s | Consensus obs=25kb | ChainWrite evm_report=50kb evm_gas=10000000 solana_report=265b solana_cu=300000 | WASM binary=100mb compressed=20mb
-  Binary hash: 57432570dca9be21fa4373d5e2fda3fb6312ea10108c60cada510f027a68d04f
-  Config hash: 3d6cc4683ba9997125c22fd0e07c909d8be522b216b4fde14cc4a2c35ff15e3c
-2026-09-10T01:54:07Z [SIMULATION] Simulator Initialized
+  Binary hash: 8b29c861df17d8a69ae6078b67f90aca38bfcb83ed5014567ec42b77b5333850
+  Config hash: 1cea647c55e2b658351f3e44d7080c5570751ee252c0987af61252ca6a4b71f2
+2026-09-11T20:54:04Z [SIMULATION] Simulator Initialized
 
-2026-09-10T01:54:07Z [SIMULATION] Running trigger trigger=cron-trigger@1.0.0
+2026-09-11T20:54:04Z [SIMULATION] Running trigger trigger=cron-trigger@1.0.0
 ╭────────────────────────────────────────────────────────────────────────────────────────────────────╮
 │ Trigger requested TEE Execution your trigger will run in one of the following Tees:                │
 │     - AWS Nitro in us-west-2                                                                       │
@@ -26,8 +26,8 @@ Credential reached redirect target: false
 ✓ Workflow Simulation Result:
 "{\"evidenceMode\":\"CRE_HTTP_SYNTHETIC_PROVIDER_NOT_A_TEE\",\"reportsGenerated\":0,\"decision\":null}"
 
-2026-09-10T01:54:07Z [SIMULATION] Execution finished signal received
-2026-09-10T01:54:07Z [SIMULATION] Skipping WorkflowEngineV2
+2026-09-11T20:54:04Z [SIMULATION] Execution finished signal received
+2026-09-11T20:54:04Z [SIMULATION] Skipping WorkflowEngineV2
 
 ╭──────────────────────────────────────────────────────╮
 │ Simulation complete! Ready to deploy your workflow?  │
@@ -37,6 +37,5 @@ Credential reached redirect target: false
 
 Initializing...
 Loading settings...
-! Using default private key for chain write simulation. To use your own key, set CRE_ETH_PRIVATE_KEY in your .env file or system environment.
 Checking RPC connectivity...
 Compiling workflow...

@@ -3,11 +3,11 @@ Scenario: stale
 ✓ Workflow compiled
 ✓ Simulation limits enabled
   HTTP: req=120kb resp=250kb timeout=10s | ConfHTTP: req=125kb resp=500kb timeout=1m30s | Consensus obs=25kb | ChainWrite evm_report=50kb evm_gas=10000000 solana_report=265b solana_cu=300000 | WASM binary=100mb compressed=20mb
-  Binary hash: 14b3bfb7d0d2404ce2a5f6f2cefba52903d74fe4f2935bef3841d4e6869b6b17
-  Config hash: 6fbc12915f07d6cb457f0990d0b80b47ec598553297865726114c287d1c41763
-2026-09-10T01:53:35Z [SIMULATION] Simulator Initialized
+  Binary hash: 0c80ffc273c1ac30990e649723b55144da1276df4ec6178342dd492a30516488
+  Config hash: 44d57978fa5244f39b9c5c23c563add632900858bebdebb6aad8b2f9a31b56bc
+2026-09-11T20:50:14Z [SIMULATION] Simulator Initialized
 
-2026-09-10T01:53:35Z [SIMULATION] Running trigger trigger=cron-trigger@1.0.0
+2026-09-11T20:50:14Z [SIMULATION] Running trigger trigger=cron-trigger@1.0.0
 ╭────────────────────────────────────────────────────────────────────────────────────────────────────╮
 │ Trigger requested TEE Execution your trigger will run in one of the following Tees:                │
 │     - AWS Nitro in us-west-2                                                                       │
@@ -22,8 +22,8 @@ Scenario: stale
 ✓ Workflow Simulation Result:
 "{\"evidenceMode\":\"SIMULATION_SYNTHETIC_STATE_NOT_A_TEE\",\"scenario\":\"stale\",\"reportsGenerated\":0,\"decision\":null}"
 
-2026-09-10T01:53:36Z [SIMULATION] Execution finished signal received
-2026-09-10T01:53:36Z [SIMULATION] Skipping WorkflowEngineV2
+2026-09-11T20:50:14Z [SIMULATION] Execution finished signal received
+2026-09-11T20:50:14Z [SIMULATION] Skipping WorkflowEngineV2
 
 ╭──────────────────────────────────────────────────────╮
 │ Simulation complete! Ready to deploy your workflow?  │
@@ -33,6 +33,5 @@ Scenario: stale
 
 Initializing...
 Loading settings...
-! Using default private key for chain write simulation. To use your own key, set CRE_ETH_PRIVATE_KEY in your .env file or system environment.
 Checking RPC connectivity...
 Compiling workflow...

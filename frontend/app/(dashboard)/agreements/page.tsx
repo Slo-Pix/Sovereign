@@ -1,6 +1,7 @@
 import Link from "next/link";
 import StatusBadge from "@/components/ui/StatusBadge";
 import { AGREEMENTS } from "@/lib/mock-data";
+import canonical from "../../../../deployments/canonical.json";
 
 export default function AgreementsPage() {
   return (
@@ -30,6 +31,19 @@ export default function AgreementsPage() {
             <div className="font-code-md text-code-md font-bold text-primary">01</div>
           </div>
         </div>
+      </section>
+
+      <section className="border-2 border-on-surface bg-surface-container-lowest p-unit-4 neo-shadow">
+        <p className="font-label-caps text-label-caps font-bold">LIVE ONCHAIN AGREEMENT</p>
+        <p className="font-code-sm text-code-sm mt-2 break-all">
+          <Link href={`/agreements/${canonical.rehearsal.agreementId}`} className="underline">
+            {canonical.rehearsal.agreementId}
+          </Link>
+        </p>
+        <p className="font-body-md text-body-md text-secondary mt-2">
+          Completed the full lifecycle on Sepolia and Arc. Opening it performs finalized public reads against the deployed
+          registries; the three rows below remain static fixtures.
+        </p>
       </section>
 
       <p className="border-2 border-on-surface bg-surface-container-lowest p-unit-4 font-code-sm text-code-sm">

@@ -94,7 +94,4 @@ Evidence is saved under the package's evidence directory and labeled **actual CR
 ## Still pending, not hidden by this implementation
 
 - HTTPS deployment and actual token provisioning for the implemented position service; proxy admission controls, restricted writer access and operational monitoring remain required. Its durable per-role quotas do not provide global edge DoS protection.
-- Member A's authenticated receiver deployment and actionable-only contract enforcement. The existing receiver-configured write code is retained; no receiver address or ABI is invented.
-- Final agreement configuration, funded testnet accounts, Arc transport/reconciliation and live receipt evidence.
-- Approved DON deployment and confidential-beta enrollment before any claim of hardware-protected processing of real sensitive data.
 - Timing/absence/public-position and repeated-policy inference remains possible. Read [honest limitations](README.md#honest-limitations-private-inputs-observable-enforcement).

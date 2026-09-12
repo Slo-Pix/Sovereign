@@ -19,15 +19,15 @@ Return public adapter address, ABI, setup transaction hashes and authorization c
 
 The sink error ABI now matches `NonActionableDecision`, and the compiler-verified [receiver ABI](../core/abis/CREDecisionReceiver.json) is included. No live receiver configuration should be inferred from source availability. Keeping the existing sink preserves its nonces; the adapter enforces SAFE rejection on that path even though changed sink source does not update previously deployed bytecode. Run [the read-only receiver preflight](scripts/CHAIN_VERIFICATION.md#read-only-receiver-deployment-preflight) with actual public identity/wiring values before broadcast.
 
-For CLI simulation broadcast use the **Sepolia mock forwarder** `0x15fC6ae953E024d975e77382eEeC56A9101f9F88`; for approved DON deployment the tenant currently lists `0xF8344CFd5c43616a4366C34E3EEE75af79a74482`. Mock delivery is not cryptographic DON authenticity. Separate deployment environments; never imply a simulator report proves attestation.
+CLI simulation broadcast uses the **Sepolia mock forwarder** `0x15fC6ae953E024d975e77382eEeC56A9101f9F88`. Mock delivery is real Sepolia transaction delivery, but it is not a cryptographic authenticity proof; never imply a simulator report proves attestation.
 
 CRE CLI v1.33.0 simulation uses fixed mock metadata identity values: workflow ID
 `0x1111111111111111111111111111111111111111111111111111111111111111`
 and workflow owner `0xaAaAaAaaAaAaAaaAaAAAAAAAAaaaAaAaAaaAaaAa`. The value printed by
 `cre workflow hash` is the deploy-style identity, not the identity inserted into
-mock-forwarder simulation reports. A simulation receiver must bind to the fixed
-mock values; a DON receiver must instead bind to the actual deployed workflow
-identity. Never reuse the simulation receiver for DON delivery.
+mock-forwarder simulation reports. The simulation receiver binds to the fixed mock
+values, which is correct for this path and must not be "corrected" to the
+config-derived hash.
 
 ## Arc transport — trusted relayer available; rehearsal completed
 
@@ -70,7 +70,7 @@ Quota coordination: the client makes one application-level GET per eligible sche
 - Configure RPC endpoints and the broadcast key locally. Never send private keys, RPC tokens or policy data in chat.
 - Generate a fresh random salt for each actual demo intent. Provision the identical policy into the workflow secret store/local simulation environment; publish only the resulting commitment.
 - Private policy provisioning starts at its owner, outside CRE. The invariant is no unintended disclosure during workflow execution, not a claim that the policy never existed outside a TEE.
-- Standard deploy approval and confidential private-beta enrollment are both still pending. Until granted, label all confidential execution as **simulation**, including when broadcasting real testnet transactions.
+- Label all confidential execution as **simulation**, including when broadcasting real testnet transactions. Simulation runs locally; the mock forwarder delivers genuine Sepolia transactions but proves no hardware attestation.
 
 ## ENS
 
