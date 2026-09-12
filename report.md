@@ -24,6 +24,7 @@ Simulation is the delivery path. Simulation runs entirely locally and is what Ch
 ### Workflow 2
 
 - Final cleanup pass once all members have finished: untrack assistant tooling (`.agents/`, `.claude/`, `skills-lock.json`) and decide which of `packages/cre/evidence/` stays as published documentation. Deliberately deferred so nobody loses working files mid-effort. The audit is done: no databases, generated output, or secret values are tracked, and the three `secrets.yaml` files contain only secret-name references.
+- Replace the temporary Cloudflare Quick Tunnel with a stable HTTPS origin **only if** persistent provider operations are required. A Quick Tunnel is adequate for a timed demonstration and disappears when its process stops, so the tunnel URL must be regenerated and re-frozen into the CRE config before each session.
 - Implement ENS only if the team keeps it in scope and Workflow 1 supplies the authoritative hook.
 
 ### Workflow 3
@@ -39,7 +40,8 @@ Simulation is the delivery path. Simulation runs entirely locally and is what Ch
 ### Cross-Workflow
 
 - Approved code and ownership review, including the cross-team Workflow 3 changes.
-- Restart and recovery rehearsal against the public run. Currently proven only in local integration tests.
+- Restart and recovery rehearsal against the public run, preserving the resulting evidence bundle. Currently proven only in local integration tests.
+- One timed demo rehearsal end to end, after the scripted-versus-interactive decision is made.
 
 **Operational note on RPC selection**
 

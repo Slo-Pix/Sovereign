@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-10",
+  "generatedAt": "2026-09-11",
   "sepolia": {
     "chainId": 11155111,
     "intentRegistry": "0x2AB9B14995048f0A6e0A80830c2654a1d72f8deD",
@@ -13,6 +13,7 @@
     "creDeliveryMode": "simulation-broadcast-mock-forwarder",
     "verified": true,
     "creReportReceiverVerified": true,
+    "creReportReceiverExplorer": "https://sepolia.etherscan.io/address/0xA4Ce101a95DCD797690d7Ae8845ea6989D9FDb62#code",
     "explorer": "https://sepolia.etherscan.io"
   },
   "arcTestnet": {

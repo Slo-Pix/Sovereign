@@ -13,9 +13,12 @@ bun --no-env-file packages/position-feed/src/operator.ts provision [--db ABSOLUT
 bun --no-env-file packages/position-feed/src/operator.ts rotate    [--db ABSOLUTE_DB_PATH] [--config ABSOLUTE_CONFIG_PATH]
 bun --no-env-file packages/position-feed/src/operator.ts revoke    [--db ABSOLUTE_DB_PATH] --agreement LOWERCASE_BYTES32 --role read|write
 bun --no-env-file packages/position-feed/src/server.ts
+POSITION_FEED_PRIVATE_ORIGIN=http://127.0.0.1:3111 POSITION_FEED_PUBLIC_PORT=3112 bun --no-env-file packages/position-feed/src/public-gateway.ts
 ```
 
 The server accepts no command-line arguments. The operator accepts only the flags above, each at most once. Tokens are **never** command-line arguments. Do not place tokens in shell history, chat, public files, test output, URLs, logs, or process arguments.
+
+For a temporary Quick Tunnel demo, keep the full service private on loopback and point the tunnel at `public-gateway.ts`, not `server.ts`. The gateway exposes only `GET /health` and bearer-authenticated `GET /agreements/:agreementId/position`; it does not forward `PUT` or any administrative route. A randomly generated `trycloudflare.com` URL is temporary development infrastructure and must remain in ignored local CRE configuration, never canonical deployment metadata.
 
 | Environment variable | Meaning / default |
 | --- | --- |
@@ -23,6 +26,8 @@ The server accepts no command-line arguments. The operator accepts only the flag
 | `POSITION_FEED_CREDENTIAL_CONFIG` | Explicit path to the private credential JSON file for provision/rotate. `--config` overrides it. No default file is searched. The server does not read this file. |
 | `POSITION_FEED_HOST` | Only `127.0.0.1` is accepted; this is also the default. No bypass flag. |
 | `POSITION_FEED_PORT` | Integer 1–65535, default `3001`. |
+| `POSITION_FEED_PRIVATE_ORIGIN` | Public-gateway upstream; defaults to `http://127.0.0.1:3111` and accepts only an explicit `127.0.0.1` HTTP origin. |
+| `POSITION_FEED_PUBLIC_PORT` | Read-only public-gateway loopback port; defaults to `3112`. |
 
 [.env.example](.env.example) has blank values, not credentials. It is a reference only; automatic env-file loading is disabled in the commands above.
 

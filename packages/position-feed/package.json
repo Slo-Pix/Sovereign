@@ -6,6 +6,7 @@
   "engines": { "bun": ">=1.3.13" },
   "scripts": {
     "start": "bun --no-env-file src/server.ts",
+    "start:public": "bun --no-env-file src/public-gateway.ts",
     "operator": "bun --no-env-file src/operator.ts",
     "test": "bun --no-env-file test",
     "typecheck": "bun --no-env-file ../../node_modules/typescript/bin/tsc --noEmit"
