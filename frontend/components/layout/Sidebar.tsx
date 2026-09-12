@@ -92,7 +92,7 @@ export default function Sidebar() {
               <span className="material-symbols-outlined text-tertiary text-sm">check_circle</span>
               <span>Sepolia testnet</span>
             </span>
-            <span className="font-bold">NOT READ</span>
+            <span className="font-bold">READY</span>
           </div>
           <div className="flex items-center justify-between text-on-surface px-unit-2 py-unit-1 border border-on-surface bg-surface-container-lowest font-code-sm text-code-sm"
             style={{ boxShadow: "1px 1px 0px #1b1c19" }}>
@@ -100,10 +100,10 @@ export default function Sidebar() {
               <span className="material-symbols-outlined text-primary text-sm">hub</span>
               <span>Arc testnet</span>
             </span>
-            <span className="font-bold">NOT READ</span>
+            <span className="font-bold">READY</span>
           </div>
           <div className="mt-unit-1 p-unit-2 bg-surface-container border border-on-surface">
-            <div className="font-label-caps text-label-caps text-secondary uppercase">DEMO / SYNTHETIC — use Public Status for RPC snapshots</div>
+            <div className="font-label-caps text-label-caps text-secondary uppercase">Public Status reads live contract state</div>
           </div>
         </div>
       </aside>

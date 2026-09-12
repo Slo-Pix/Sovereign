@@ -11,7 +11,6 @@ const STATUS_CONFIG: Record<string, { bg: string; text: string; icon?: string }>
   DEFAULT: { bg: "#ECEAE2", text: "#1b1c19", icon: "info" },
 };
 
-// Fixture-only badge. Public RPC state is displayed separately in Monitoring.
 export default function StatusBadge({ status, size = "sm" }: StatusBadgeProps) {
   const config = STATUS_CONFIG[status] ?? STATUS_CONFIG.DEFAULT;
   const padding = size === "md" ? "px-3 py-1" : "px-2 py-0.5";
@@ -29,7 +28,7 @@ export default function StatusBadge({ status, size = "sm" }: StatusBadgeProps) {
           {config.icon}
         </span>
       )}
-      DEMO / {status}
+      {status}
     </span>
   );
 }

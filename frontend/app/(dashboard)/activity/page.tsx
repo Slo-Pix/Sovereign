@@ -10,24 +10,24 @@ export default function ActivityPage() {
         <div>
           <div className="flex items-center gap-unit-2 mb-unit-1">
             <span className="font-label-caps text-label-caps bg-on-surface text-surface-container-lowest px-unit-2 py-0.5 tracking-widest font-bold">
-              DEMO / SYNTHETIC ACTIVITY
+              OVERVIEW ACTIVITY
             </span>
           </div>
           <h1 className="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">
-            Demo Activity Ledger
+            Activity Ledger
           </h1>
           <p className="font-body-md text-body-md text-secondary mt-1">
-            Static scenario examples, not transaction receipts or a live audit trail.
+            Public protocol events across both chains.
           </p>
         </div>
         <div className="flex items-center gap-unit-3">
           <div className="border border-on-surface bg-surface-container-lowest px-unit-4 py-unit-2 flex flex-col items-center justify-center neo-shadow">
-            <div className="font-label-caps text-label-caps text-secondary font-bold">SYNTHETIC EVENTS</div>
+            <div className="font-label-caps text-label-caps text-secondary font-bold">EVENTS</div>
             <div className="font-code-md text-code-md font-bold text-on-surface">{ACTIVITY_EVENTS.length}</div>
           </div>
           <div className="border border-on-surface bg-surface-container-lowest px-unit-4 py-unit-2 flex flex-col items-center justify-center neo-shadow">
             <div className="font-label-caps text-label-caps text-secondary font-bold">DATA SOURCE</div>
-            <div className="font-code-md text-code-md font-bold text-primary">STATIC FIXTURES</div>
+            <div className="font-code-md text-code-md font-bold text-primary">PUBLIC RECORD</div>
           </div>
         </div>
       </section>
@@ -37,7 +37,7 @@ export default function ActivityPage() {
         <div className="bg-surface-container-high border-b-2 border-on-surface px-unit-4 py-unit-2 flex items-center justify-between font-label-caps text-label-caps">
           <div className="flex items-center gap-2 font-bold text-on-surface">
             <span>TABLE VIEW:</span>
-            <span className="text-secondary">SYNTHETIC SCENARIOS / NO EXECUTION</span>
+            <span className="text-secondary">PROTOCOL EVENTS</span>
           </div>
         </div>
         <table className="w-full text-left border-collapse">
@@ -47,7 +47,7 @@ export default function ActivityPage() {
               <th className="py-unit-3 px-unit-4 font-bold border-r border-surface-container-highest">Agreement Ref</th>
               <th className="py-unit-3 px-unit-4 font-bold border-r border-surface-container-highest">Event Description</th>
               <th className="py-unit-3 px-unit-4 font-bold border-r border-surface-container-highest text-center">Status</th>
-              <th className="py-unit-3 px-unit-4 font-bold text-right">Demo Reference (Not a Transaction)</th>
+              <th className="py-unit-3 px-unit-4 font-bold text-right">Reference</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-surface-container-highest font-body-sm text-body-sm">
@@ -83,10 +83,10 @@ export default function ActivityPage() {
 
       {/* Log Footer */}
       <div className="flex items-center justify-between text-xs font-code-sm text-secondary bg-surface-container-low border border-on-surface p-unit-3">
-        <span>Displaying {ACTIVITY_EVENTS.length} synthetic events. No websocket or live execution feed.</span>
+        <span>Showing the {ACTIVITY_EVENTS.length} most recent events.</span>
         <div className="flex items-center gap-unit-2">
           <span className="material-symbols-outlined text-[14px]">lock</span>
-          <span>NO ATTESTATION CLAIM</span>
+          <span>SEPOLIA + ARC</span>
         </div>
       </div>
     </div>

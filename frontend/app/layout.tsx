@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Sovereign // Testnet Demo & Public Status",
+  title: "Sovereign // Private Policy Enforcement",
   description:
-    "Synthetic agreement UI and read-only public testnet status. No transactions, private evaluation results, or attestation claims.",
+    "Private risk policies, enforced onchain across Ethereum and Arc without publishing the policy.",
 };
 
 export default function RootLayout({

@@ -35,8 +35,10 @@ export async function publicStatusResponse(id: string, read: SnapshotReader): Pr
 }
 
 export const readPublicSnapshots: SnapshotReader = async id => {
-  const sepolia = createPublicClient({ transport: http(process.env.SEPOLIA_RPC_URL || "https://ethereum-sepolia-rpc.publicnode.com", { timeout: 8000, retryCount: 0 }) });
-  const arc = createPublicClient({ transport: http(process.env.ARC_RPC_URL || "https://rpc.testnet.arc.network", { timeout: 8000, retryCount: 0 }) });
+  // One retry: a cold TLS handshake to either RPC can exceed the timeout and would
+  // otherwise render "unavailable" on the first request after a server start.
+  const sepolia = createPublicClient({ transport: http(process.env.SEPOLIA_RPC_URL || "https://ethereum-sepolia-rpc.publicnode.com", { timeout: 8000, retryCount: 1 }) });
+  const arc = createPublicClient({ transport: http(process.env.ARC_RPC_URL || "https://rpc.testnet.arc.network", { timeout: 8000, retryCount: 1 }) });
   const [sepoliaId, arcId, sourceBlock, destBlock] = await Promise.all([
     sepolia.getChainId(), arc.getChainId(), sepolia.getBlock({ blockTag: "finalized" }), arc.getBlock({ blockTag: "finalized" }),
   ]);

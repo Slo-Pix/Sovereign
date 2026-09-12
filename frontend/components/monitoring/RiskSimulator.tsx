@@ -120,7 +120,7 @@ export default function PublicAgreementStatus() {
         <form onSubmit={readStatus} className="space-y-3">
           <label htmlFor="agreement-id" className="block font-code-md font-bold">Public agreement ID (bytes32)</label>
           <p id="agreement-id-help" className="text-sm text-secondary">
-            Use 0x followed by 64 hexadecimal characters. Demo IDs such as SOV-8F29 are not onchain IDs.
+            Use 0x followed by 64 hexadecimal characters.
             No wallet is required. Do not enter policies, credentials, or private feed data.
           </p>
           <input
@@ -153,7 +153,7 @@ export default function PublicAgreementStatus() {
 
       <div aria-live="polite" aria-busy={pending}>
         {error && <p role="alert" className="border-2 border-on-surface bg-surface-container-lowest p-4">{error}</p>}
-        {!snapshot && !pending && !error && <p className="text-secondary">No RPC result loaded. No demo fallback is used here.</p>}
+        {!snapshot && !pending && !error && <p className="text-secondary">No result loaded yet. Nothing is ever substituted for a failed read.</p>}
         {snapshot && (
           <section className="space-y-4">
             <div className="border-2 border-on-surface bg-surface-container-lowest p-4">

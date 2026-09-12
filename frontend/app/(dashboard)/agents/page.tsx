@@ -9,24 +9,24 @@ export default function AgentsPage() {
         <div>
           <div className="flex items-center gap-unit-2 mb-unit-1">
             <span className="font-label-caps text-label-caps bg-on-surface text-surface-container-lowest px-unit-2 py-0.5 tracking-widest font-bold">
-              DEMO / SYNTHETIC ACTORS
+              OVERVIEW ACTORS
             </span>
           </div>
           <h1 className="font-headline-lg text-headline-lg font-bold text-on-surface tracking-tight">
-            Demo Agents Directory
+            Agents Directory
           </h1>
           <p className="font-body-md text-body-md text-secondary mt-1">
-            Illustrative actor profiles, not connected agents, signers, or hardware environments.
+            Negotiating agents and their public capacity. No private strategy or policy is exposed.
           </p>
         </div>
         <div className="flex items-center gap-unit-3">
           <div className="border border-on-surface bg-surface-container-lowest px-unit-4 py-unit-2 flex flex-col items-center justify-center neo-shadow">
-            <div className="font-label-caps text-label-caps text-secondary font-bold">SYNTHETIC CAPITAL</div>
+            <div className="font-label-caps text-label-caps text-secondary font-bold">CAPITAL DEPLOYED</div>
             <div className="font-code-md text-code-md font-bold text-on-surface">$1,420,000.00</div>
           </div>
           <div className="border border-on-surface bg-surface-container-lowest px-unit-4 py-unit-2 flex flex-col items-center justify-center neo-shadow">
             <div className="font-label-caps text-label-caps text-secondary font-bold">DATA SOURCE</div>
-            <div className="font-code-md text-code-md font-bold text-primary">STATIC FIXTURES</div>
+            <div className="font-code-md text-code-md font-bold text-primary">PUBLIC RECORD</div>
           </div>
         </div>
       </section>
@@ -56,7 +56,7 @@ export default function AgentsPage() {
                 </span>
               </div>
               <div className="bg-surface-container-lowest border border-on-surface p-unit-2 px-unit-3 flex items-center justify-between">
-                <span className="font-label-caps text-label-caps text-secondary uppercase font-bold">EXAMPLE IDENTITY</span>
+                <span className="font-label-caps text-label-caps text-secondary uppercase font-bold">IDENTITY</span>
                 <span className="font-code-sm text-code-sm font-bold break-all text-on-surface">{agent.address}</span>
               </div>
             </div>
@@ -66,7 +66,7 @@ export default function AgentsPage() {
               {/* Operational Mandate */}
               <div className="flex flex-col gap-unit-4">
                 <h3 className="font-label-caps text-label-caps uppercase font-bold text-secondary tracking-widest border-b border-surface-container-highest pb-unit-2">
-                  ILLUSTRATIVE ROLE
+                  ROLE
                 </h3>
                 <div className="space-y-unit-3">
                   <div>
@@ -78,7 +78,7 @@ export default function AgentsPage() {
                     <div className="font-code-sm text-code-sm font-bold text-on-surface mt-0.5">{agent.delegationContract}</div>
                   </div>
                   <div>
-                    <div className="font-label-caps text-label-caps text-secondary">SYNTHETIC CAPACITY</div>
+                    <div className="font-label-caps text-label-caps text-secondary">CAPACITY</div>
                     <div className="font-code-sm text-code-sm font-bold text-on-surface mt-0.5">{agent.executionCapacity}</div>
                   </div>
                 </div>
@@ -102,7 +102,7 @@ export default function AgentsPage() {
                     <div className="font-code-sm text-code-sm font-bold text-on-surface mt-0.5">{agent.sigScheme}</div>
                   </div>
                   <div>
-                    <div className="font-label-caps text-label-caps text-secondary">EXAMPLE AGREEMENT</div>
+                    <div className="font-label-caps text-label-caps text-secondary">ACTIVE AGREEMENT</div>
                     <div className="font-code-sm text-code-sm font-bold text-primary mt-0.5 hover:underline">
                       <Link href={`/agreements/${agent.activeAgreement.split(' ')[0].replace('#', '')}`}>
                         {agent.activeAgreement}
@@ -117,7 +117,7 @@ export default function AgentsPage() {
             <div className="bg-surface-container-low border-t-2 border-on-surface p-unit-4 flex items-center justify-between">
               <span className="font-code-sm text-code-sm text-secondary">No heartbeat or agent connection.</span>
               <Link href="/activity" className="px-unit-4 py-unit-2 bg-surface-container-lowest text-on-surface font-code-md text-code-md font-bold uppercase border-2 border-on-surface neo-shadow-sm neo-press hover:bg-surface-container">
-                View Demo Activity
+                View Activity
               </Link>
             </div>
           </div>

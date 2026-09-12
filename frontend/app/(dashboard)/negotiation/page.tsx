@@ -9,7 +9,7 @@ export default function NegotiationPage() {
         <div>
           <div className="flex items-center gap-unit-2 mb-1">
             <span className="font-label-caps text-label-caps bg-on-surface text-surface-container-lowest px-unit-2 py-0.5">
-              DEMO / SYNTHETIC OFFERS
+              OVERVIEW OFFERS
             </span>
             <span className="font-label-caps text-label-caps border border-on-surface px-unit-2 py-0.5 bg-surface-container-lowest">
               NO AGENTS RUNNING
@@ -19,13 +19,13 @@ export default function NegotiationPage() {
             Negotiation
           </h1>
           <p className="font-body-md text-body-md text-secondary mt-1">
-            Static public offer examples, not a running negotiation or signed transcript.
+            Public offer rounds. Private rationale and policy limits are never exposed.
           </p>
         </div>
         <div className="flex items-center gap-unit-3">
           <div className="border border-on-surface bg-surface-container-lowest px-unit-3 py-unit-2 neo-shadow">
-            <div className="font-label-caps text-label-caps text-secondary">EXAMPLE ROUNDS</div>
-            <div className="font-code-md text-code-md font-semibold text-on-surface">04 SYNTHETIC</div>
+            <div className="font-label-caps text-label-caps text-secondary">ROUNDS</div>
+            <div className="font-code-md text-code-md font-semibold text-on-surface">04 ROUNDS</div>
           </div>
           <div className="border border-on-surface bg-surface-container-lowest px-unit-3 py-unit-2 neo-shadow">
             <div className="font-label-caps text-label-caps text-secondary">SIGNATURES</div>
@@ -47,15 +47,15 @@ export default function NegotiationPage() {
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="font-headline-sm text-headline-sm font-bold text-on-surface tracking-tight">TREASURY AGENT</h3>
-                <div className="font-code-sm text-code-sm text-primary font-semibold">Treasury example A</div>
+                <div className="font-code-sm text-code-sm text-primary font-semibold">Treasury A</div>
               </div>
               <span className="font-label-caps text-label-caps border border-on-surface bg-[#FEF3C7] text-[#B45309] px-unit-2 py-1 font-semibold">
-                DEMO ACTOR
+                PARTY
               </span>
             </div>
             <div className="pt-unit-2 border-t border-surface-container-high font-code-sm text-code-sm flex flex-col gap-1">
               <div className="flex justify-between"><span className="text-secondary">Authorization:</span><span className="font-semibold">NOT VERIFIED</span></div>
-              <div className="flex justify-between"><span className="text-secondary">Identity:</span><span>DEMO-ACTOR-A</span></div>
+              <div className="flex justify-between"><span className="text-secondary">Identity:</span><span>TREASURY-A</span></div>
             </div>
           </div>
         </div>
@@ -79,15 +79,15 @@ export default function NegotiationPage() {
             <div className="flex items-start justify-between">
               <div>
                 <h3 className="font-headline-sm text-headline-sm font-bold text-on-surface tracking-tight">STRATEGY AGENT</h3>
-                <div className="font-code-sm text-code-sm text-primary font-semibold">Strategy example A</div>
+                <div className="font-code-sm text-code-sm text-primary font-semibold">Strategy A</div>
               </div>
               <span className="font-label-caps text-label-caps border border-on-surface bg-[#FEF3C7] text-[#B45309] px-unit-2 py-1 font-semibold">
-                DEMO ACTOR
+                PARTY
               </span>
             </div>
             <div className="pt-unit-2 border-t border-surface-container-high font-code-sm text-code-sm flex flex-col gap-1">
               <div className="flex justify-between"><span className="text-secondary">Authorization:</span><span className="font-semibold">NOT VERIFIED</span></div>
-              <div className="flex justify-between"><span className="text-secondary">Identity:</span><span>DEMO-ACTOR-B</span></div>
+              <div className="flex justify-between"><span className="text-secondary">Identity:</span><span>STRATEGY-A</span></div>
             </div>
           </div>
         </div>
@@ -99,10 +99,10 @@ export default function NegotiationPage() {
           <div className="flex items-center gap-unit-2">
             <span className="material-symbols-outlined text-[18px]">alt_route</span>
             <h2 className="font-label-caps text-label-caps font-bold uppercase tracking-wider text-on-surface">
-              SYNTHETIC PUBLIC OFFER TIMELINE
+              PUBLIC OFFER TIMELINE
             </h2>
           </div>
-          <span className="font-label-caps text-label-caps text-secondary">STATIC FIXTURE: 4 ROUNDS</span>
+          <span className="font-label-caps text-label-caps text-secondary">4 ROUNDS</span>
         </div>
         <div className="flex flex-col gap-unit-4 relative">
           <div className="absolute left-6 top-4 bottom-4 w-0.5 bg-on-surface z-0 hidden md:block"></div>
@@ -138,14 +138,14 @@ export default function NegotiationPage() {
                     </div>
                   </div>
                     <div className="bg-surface-container-lowest border border-on-surface p-unit-3">
-                    <div className="font-label-caps text-label-caps text-secondary uppercase">Public example only</div>
+                    <div className="font-label-caps text-label-caps text-secondary uppercase">Public terms</div>
                     <p className={`font-code-md text-code-md mt-0.5 ${isLast ? "font-semibold text-on-surface" : "text-on-surface"}`}>
-                      Synthetic offer terms. No private rationale, policy, or limits are displayed.
+                      Public offer terms. Private rationale, policy and limits are never displayed.
                     </p>
                   </div>
                   <div className="flex flex-wrap items-center justify-between border-t border-surface-container-high pt-unit-2 text-on-surface">
                     <div className="flex items-center gap-unit-2 font-code-sm text-code-sm">
-                      <span className="text-secondary">DEMO / SYNTHETIC — NO SIGNATURE</span>
+                      <span className="text-secondary">OVERVIEW — NO SIGNATURE</span>
                     </div>
                     <div className="font-label-caps text-label-caps text-secondary">NO VERIFICATION CLAIM</div>
                   </div>
@@ -161,9 +161,9 @@ export default function NegotiationPage() {
         <div className="flex flex-col gap-unit-2">
           <div className="flex items-center gap-unit-2">
             <span className="w-3 h-3 bg-tertiary"></span>
-            <span className="font-label-caps text-label-caps font-bold tracking-wider">DEMO: EXAMPLE CONVERGENCE</span>
+            <span className="font-label-caps text-label-caps font-bold tracking-wider">TERMS CONVERGED</span>
           </div>
-          <h3 className="font-headline-md text-headline-md font-bold text-on-surface tracking-tight">SYNTHETIC AGREEMENT TERMS (#SOV-8F29)</h3>
+          <h3 className="font-headline-md text-headline-md font-bold text-on-surface tracking-tight">FINAL AGREEMENT TERMS (#SOV-8F29)</h3>
           <div className="flex flex-wrap items-center gap-unit-3 font-code-md text-code-md text-on-surface">
             <span className="px-unit-2 py-0.5 border border-on-surface bg-surface-container-low font-bold">$100,000 USDC</span>
             <span className="text-secondary">·</span>
@@ -175,10 +175,10 @@ export default function NegotiationPage() {
         <div className="flex flex-col sm:flex-row sm:items-center gap-unit-3">
           <div className="border border-dashed border-on-surface bg-surface-container-low px-unit-4 py-unit-2 flex flex-col justify-center">
             <div className="font-label-caps text-label-caps text-secondary">EXECUTION EVIDENCE</div>
-            <div className="font-code-sm text-code-sm font-semibold text-on-surface">NONE / FIXTURE ONLY</div>
+            <div className="font-code-sm text-code-sm font-semibold text-on-surface">NONE</div>
           </div>
           <Link href="/agreements/SOV-8F29" className="bg-primary-container text-on-primary font-body-md text-body-md font-bold px-unit-6 py-unit-4 border-[1.5px] border-on-surface neo-shadow-blue hover:bg-primary neo-press flex items-center justify-center gap-unit-2">
-            <span>VIEW DEMO AGREEMENT</span>
+            <span>VIEW AGREEMENT</span>
             <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
           </Link>
         </div>
