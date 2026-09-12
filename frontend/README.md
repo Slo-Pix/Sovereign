@@ -35,6 +35,26 @@ The frontend intentionally keeps embedded-wallet creation disabled. Privy is use
 
 Optional server-only `SEPOLIA_RPC_URL` and `ARC_RPC_URL` override public read RPCs. Never prefix credentials with `NEXT_PUBLIC_`; never configure the private position read token in the frontend. Contract addresses come from [canonical deployments](../deployments/canonical.json). Public status is read-only and unauthenticated because it returns public chain data, but production needs edge IP/global rate limits, request timeouts and budget controls to protect RPC access. No durable public-endpoint limiter is claimed here.
 
+The Agreements and Overview pages discover records from finalized `AgreementOpened`
+events on the deployed Sepolia registry, then verify each ID against the Sepolia
+registry and Arc escrow at their finalized blocks. The indexer defaults to the
+latest 5,000 finalized blocks and uses 10-block log
+chunks for compatibility with free RPC plans. For a wider reconciliation window,
+set these server-only variables in `.env.local`:
+
+```bash
+AGREEMENT_INDEX_START_BLOCK=11690500
+AGREEMENT_INDEX_CHUNK_BLOCKS=10
+AGREEMENT_INDEX_RPC_URL=https://ethereum-sepolia-rpc.publicnode.com
+```
+
+`AGREEMENT_INDEX_START_BLOCK` takes precedence over the lookback window. The UI
+reports the indexed block window and never substitutes fixture agreements when
+the provider or index is unavailable. Log discovery can use a separate public
+RPC so rate limits on the state-read provider do not prevent indexing; every
+agreement is still verified through the configured Sepolia and Arc state-read
+providers before it is rendered.
+
 From this directory: `npm ci --ignore-scripts`, `npm run typecheck`, `npm run lint`, `npm test`, then `npm run build`. `npm test` includes API and agent tests; agent tests can also run from their own workspace. Build output must not be committed. Remote package/Node availability and dependency audits remain operator responsibilities.
 
 The [private position provider](../packages/position-feed/README.md), [CRE workflow](../packages/cre/README.md) and [trusted relayer](../packages/relayer/README.md) are separate services. CRE evaluation is scheduler-driven after `ValidationRequested`; the relayer alone can lock, settle, or unwind escrow. The public UI exposes their finalized public state and handoff status but never operates their private credentials or privileged writes. Local lifecycle tests and provider tests are reproducible from those packages; public deployment remains gated on actual identity/wallet configuration and authorization.

@@ -1,18 +1,14 @@
 import Link from "next/link";
 import { ArrowRight, Bot, History, LockKeyhole, Plus } from "lucide-react";
-import canonical from "../../../../deployments/canonical.json";
-import { readLiveAgreement } from "@/lib/server/live-ledger";
+import { indexLiveAgreements } from "@/lib/server/live-ledger";
 import { ESCROW_STATES, REGISTRY_STATES } from "@/lib/server/public-status";
 
 export const dynamic = "force-dynamic";
 
 export default async function OverviewPage() {
-  let agreement: Awaited<ReturnType<typeof readLiveAgreement>> | null = null;
-  try {
-    agreement = await readLiveAgreement(canonical.rehearsal.agreementId as `0x${string}`);
-  } catch {
-    agreement = null;
-  }
+  let index: Awaited<ReturnType<typeof indexLiveAgreements>> | null = null;
+  try { index = await indexLiveAgreements(); } catch { index = null; }
+  const agreement = index?.agreements.find((candidate) => candidate.capital > 0n && candidate.duration > 0n) ?? null;
 
   const amount = agreement ? Number(agreement.capital) / 1_000_000 : null;
   const metrics = [
@@ -30,7 +26,7 @@ export default async function OverviewPage() {
           </span>
           <h1 className="mt-2 font-headline-lg font-bold tracking-tight text-headline-lg text-on-surface">Control Plane Overview</h1>
           <p className="mt-1 max-w-2xl font-body-md text-body-md text-secondary">
-            Public terms and finalized state from the deployed rehearsal. Private policy values and evaluations are never displayed.
+            Public terms and finalized state discovered from the deployed registry. Private policy values and evaluations are never displayed.
           </p>
         </div>
         <Link href="/create-intent" className="flex items-center gap-2 border-2 border-on-surface bg-primary-container px-unit-6 py-unit-3 font-code-md font-bold text-on-primary">
@@ -54,7 +50,7 @@ export default async function OverviewPage() {
         <section className="neo-shadow-lg border-2 border-on-surface bg-surface-container-lowest p-unit-6">
           <div className="flex flex-col justify-between gap-4 md:flex-row">
             <div>
-              <div className="font-label-caps font-bold text-label-caps text-primary">CANONICAL AGREEMENT</div>
+              <div className="font-label-caps font-bold text-label-caps text-primary">LATEST AGREEMENT WITH TERMS</div>
               <h2 className="mt-1 break-all font-headline-md font-bold">{agreement.id}</h2>
               <p className="mt-2 font-code-sm text-secondary">{agreement.principal} ↔ {agreement.counterparty}</p>
             </div>
@@ -71,7 +67,7 @@ export default async function OverviewPage() {
       ) : (
         <section className="border-2 border-on-surface bg-surface-container-lowest p-unit-6">
           <h2 className="font-headline-sm font-bold">Live data unavailable</h2>
-          <p className="mt-2 text-secondary">No replacement fixture data is shown while finalized RPC reads are unavailable.</p>
+          <p className="mt-2 text-secondary">No indexed agreement with finalized public terms is available. Open agreements remain visible in the Agreements ledger.</p>
         </section>
       )}
     </div>
