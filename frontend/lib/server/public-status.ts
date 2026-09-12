@@ -11,22 +11,32 @@ export const validAgreementId = (id: string): id is Hex => id.length === 66 && /
 export type SnapshotReader = (id: Hex) => Promise<{
   sepolia: { chainId: number; blockNumber: bigint; state: number };
   arc: { chainId: number; blockNumber: bigint; state: number };
+  latest?: {
+    sepolia: { blockNumber: bigint; state: number };
+    arc: { blockNumber: bigint; state: number };
+  };
 }>;
 
 export async function publicStatusResponse(id: string, read: SnapshotReader): Promise<Response> {
   if (!validAgreementId(id)) return Response.json({ error: "Invalid agreement ID" }, { status: 400, headers });
   try {
-    const { sepolia, arc } = await read(id.toLowerCase() as Hex);
+    const { sepolia, arc, latest } = await read(id.toLowerCase() as Hex);
     if (sepolia.chainId !== 11155111 || arc.chainId !== 5042002 || sepolia.blockNumber < 0n || arc.blockNumber < 0n ||
       !Number.isInteger(sepolia.state) || !REGISTRY_STATES[sepolia.state] ||
-      !Number.isInteger(arc.state) || !ESCROW_STATES[arc.state]) throw new Error("Invalid chain response");
+      !Number.isInteger(arc.state) || !ESCROW_STATES[arc.state] ||
+      (latest && (latest.sepolia.blockNumber < sepolia.blockNumber || latest.arc.blockNumber < arc.blockNumber ||
+        !REGISTRY_STATES[latest.sepolia.state] || !ESCROW_STATES[latest.arc.state]))) throw new Error("Invalid chain response");
     return Response.json({
       evidenceMode: "LIVE_RPC_READS", agreementId: id.toLowerCase(),
       chains: {
         sepolia: { chainId: sepolia.chainId, blockNumber: sepolia.blockNumber.toString(), state: REGISTRY_STATES[sepolia.state] },
         arc: { chainId: arc.chainId, blockNumber: arc.blockNumber.toString(), state: ESCROW_STATES[arc.state] },
       },
-      warning: "Independent finalized public snapshots only. ACTIVE is not a fresh SAFE attestation. No transaction or private evaluation is performed by this request.",
+      ...(latest ? { latest: {
+        sepolia: { blockNumber: latest.sepolia.blockNumber.toString(), state: REGISTRY_STATES[latest.sepolia.state] },
+        arc: { blockNumber: latest.arc.blockNumber.toString(), state: ESCROW_STATES[latest.arc.state] },
+      } } : {}),
+      warning: "Finalized snapshots are authoritative in this response; latest observations are provisional. ACTIVE is not a fresh SAFE attestation. No transaction or private evaluation is performed.",
     }, { headers });
   } catch {
     // Provider exceptions can contain RPC credentials. Never serialize them or fall back to fixtures.
@@ -39,17 +49,25 @@ export const readPublicSnapshots: SnapshotReader = async id => {
   // otherwise render "unavailable" on the first request after a server start.
   const sepolia = createPublicClient({ transport: http(process.env.SEPOLIA_RPC_URL || "https://ethereum-sepolia-rpc.publicnode.com", { timeout: 8000, retryCount: 1 }) });
   const arc = createPublicClient({ transport: http(process.env.ARC_RPC_URL || "https://rpc.testnet.arc.network", { timeout: 8000, retryCount: 1 }) });
-  const [sepoliaId, arcId, sourceBlock, destBlock] = await Promise.all([
+  const [sepoliaId, arcId, sourceBlock, destBlock, latestSourceBlock, latestDestBlock] = await Promise.all([
     sepolia.getChainId(), arc.getChainId(), sepolia.getBlock({ blockTag: "finalized" }), arc.getBlock({ blockTag: "finalized" }),
+    sepolia.getBlock({ blockTag: "latest" }), arc.getBlock({ blockTag: "latest" }),
   ]);
-  if (sepoliaId !== 11155111 || arcId !== 5042002 || sourceBlock.number === null || destBlock.number === null) throw new Error("Invalid network");
-  const [agreement, escrow] = await Promise.all([
+  if (sepoliaId !== 11155111 || arcId !== 5042002 || sourceBlock.number === null || destBlock.number === null || latestSourceBlock.number === null || latestDestBlock.number === null) throw new Error("Invalid network");
+  const [agreement, escrow, latestAgreement, latestEscrow] = await Promise.all([
     sepolia.readContract({ address: canonical.sepolia.agreementRegistry as Hex, abi: agreementAbi as Abi, functionName: "agreements", args: [id], blockNumber: sourceBlock.number }),
     arc.readContract({ address: canonical.arcTestnet.sovereignEscrow as Hex, abi: escrowAbi as Abi, functionName: "escrows", args: [id], blockNumber: destBlock.number }),
+    sepolia.readContract({ address: canonical.sepolia.agreementRegistry as Hex, abi: agreementAbi as Abi, functionName: "agreements", args: [id], blockNumber: latestSourceBlock.number }),
+    arc.readContract({ address: canonical.arcTestnet.sovereignEscrow as Hex, abi: escrowAbi as Abi, functionName: "escrows", args: [id], blockNumber: latestDestBlock.number }),
   ]);
-  if (!Array.isArray(agreement) || agreement.length !== 10 || !Array.isArray(escrow) || escrow.length !== 7) throw new Error("Invalid contract response");
+  if (!Array.isArray(agreement) || agreement.length !== 10 || !Array.isArray(escrow) || escrow.length !== 7 ||
+    !Array.isArray(latestAgreement) || latestAgreement.length !== 10 || !Array.isArray(latestEscrow) || latestEscrow.length !== 7) throw new Error("Invalid contract response");
   return {
     sepolia: { chainId: sepoliaId, blockNumber: sourceBlock.number, state: Number(agreement[9]) },
     arc: { chainId: arcId, blockNumber: destBlock.number, state: Number(escrow[6]) },
+    latest: {
+      sepolia: { blockNumber: latestSourceBlock.number, state: Number(latestAgreement[9]) },
+      arc: { blockNumber: latestDestBlock.number, state: Number(latestEscrow[6]) },
+    },
   };
 };

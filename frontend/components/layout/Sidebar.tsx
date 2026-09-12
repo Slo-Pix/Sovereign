@@ -25,7 +25,7 @@ const NAV_ITEMS = [
   { href: "/agreements", label: "Agreements", icon: Gavel },
   { href: "/negotiation", label: "Negotiation", icon: Handshake },
   { href: "/monitoring", label: "Public Status", icon: BarChart3 },
-  { href: "/create-intent", label: "Intent Preview", icon: CirclePlus },
+  { href: "/create-intent", label: "Create Agreement", icon: CirclePlus },
   { href: "/activity", label: "Activity", icon: History },
   { href: "/agents", label: "Agents", icon: Bot },
 ] satisfies Array<{ href: string; label: string; icon: LucideIcon }>;

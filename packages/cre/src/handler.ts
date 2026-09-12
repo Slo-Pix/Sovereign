@@ -9,13 +9,19 @@ export type WorkflowPorts = {
   publish(decision: Decision): { delivery: 'report-only' | 'sepolia'; txHash?: string }
 }
 
-export function executeCheck(runtime: Pick<TeeRuntime<Config>, 'config' | 'getSecret' | 'now'>, checkKind: CheckKind, ports: WorkflowPorts): string {
+export function executeCheck(runtime: Pick<TeeRuntime<Config>, 'config' | 'getSecret' | 'now'> & {
+  // Safe stage labels are useful in local simulation; never log secret values or raw errors.
+  log?: (message: string) => void
+}, checkKind: CheckKind, ports: WorkflowPorts): string {
   const config = runtime.config
+  let stage = 'snapshot'
   try {
     const snapshot = ports.readSnapshot()
     if (snapshot.state !== (checkKind === 1 ? 3 : 4)) return 'NO_DECISION'
     // No public workflow step, trigger input, log or DON request receives this value.
+    stage = 'secret'
     const rawPolicy = runtime.getSecret({ id: config.policySecretId }).result().value
+    stage = 'policy-parse'
     const policy = parsePolicy(rawPolicy)
     // Verify binding before sending even an authenticated position read for monitoring.
     if (checkKind === 2 && (!policy || !equalHash(hashPolicy(policy), snapshot.policyCommitment) ||
@@ -23,7 +29,9 @@ export function executeCheck(runtime: Pick<TeeRuntime<Config>, 'config' | 'getSe
       !equalHash(snapshot.agreementId, config.agreementId) ||
       !equalHash(snapshot.intentId, config.terms.intentId) ||
       !equalHash(hashTerms(config.terms), snapshot.termsHash))) return 'NO_DECISION'
+    stage = checkKind === 2 ? 'position' : 'evaluation'
     const position = checkKind === 2 ? ports.readPosition() : undefined
+    stage = 'evaluation'
     const decision = evaluate({ checkKind, agreementId: config.agreementId, snapshot, policy,
       terms: config.terms, position, nowSeconds: BigInt(Math.floor(runtime.now().getTime() / 1000)),
       maxPositionAgeSeconds: config.maxPositionAgeSeconds })
@@ -33,6 +41,7 @@ export function executeCheck(runtime: Pick<TeeRuntime<Config>, 'config' | 'getSe
 
     // Re-read immediately before report generation: never use offer nonce or process-local counters.
     // A race after this check is still possible; the receiver's nonce/state checks remain mandatory.
+    stage = 'resnapshot'
     const current = ports.readSnapshot()
     if (current.lastNonce !== snapshot.lastNonce || current.state !== snapshot.state ||
         !equalHash(current.agreementId, snapshot.agreementId) ||
@@ -40,12 +49,14 @@ export function executeCheck(runtime: Pick<TeeRuntime<Config>, 'config' | 'getSe
         !equalHash(current.termsHash, snapshot.termsHash) ||
         !equalHash(current.policyCommitment, snapshot.policyCommitment) ||
         !equalHash(current.intentCommitment, snapshot.intentCommitment)) return 'NO_DECISION'
+    stage = 'publish'
     const delivery = ports.publish(decision)
     // Only public identifiers, decision and transport metadata leave the confidential handler.
     return JSON.stringify({ agreementId: decision.agreementId, decisionId: decision.decisionId,
       checkKind, result: decision.result, decisionNonce: decision.decisionNonce.toString(), ...delivery })
   } catch {
     // Do not echo SDK errors: HTTP responses and secret provider diagnostics may contain inputs.
+    runtime.log?.(`workflow execution failed during ${stage}`)
     throw new Error('Workflow execution failed; inspect public chain state before retrying')
   }
 }

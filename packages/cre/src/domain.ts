@@ -5,7 +5,10 @@ import { z } from 'zod'
 export const uint256 = z.string().regex(/^(0|[1-9][0-9]*)$/)
   .transform(BigInt).refine(value => value < 2n ** 256n)
 export const bytes32 = z.string().regex(/^0x[0-9a-fA-F]{64}$/).transform(value => value as Hex)
-export const address = z.string().regex(/^0x[0-9a-fA-F]{40}$/).transform(value => value as Hex)
+// ABI encoding is case-insensitive, while viem rejects mixed-case addresses with
+// an invalid EIP-55 checksum. Canonicalize casing at the config/chain boundary.
+export const address = z.string().regex(/^0x[0-9a-fA-F]{40}$/)
+  .transform(value => value.toLowerCase() as Hex)
 export const policySchema = z.object({
   minYieldBps: uint256,
   maxLossBps: uint256,
@@ -87,35 +90,40 @@ export function evaluate(input: {
   nowSeconds: bigint
   maxPositionAgeSeconds: number
 }): Decision | null {
-  const { checkKind, agreementId, snapshot, policy, terms, nowSeconds } = input
-  if (!equalHash(agreementId, snapshot.agreementId) ||
-      snapshot.state !== (checkKind === 1 ? 3 : 4) ||
-      snapshot.lastNonce < 0n || snapshot.lastNonce >= 2n ** 64n - 1n ||
-      nowSeconds < 0n || !equalHash(terms.intentId, snapshot.intentId) ||
-      !equalHash(hashTerms(terms), snapshot.termsHash) ||
-      !equalHash(snapshot.policyCommitment, snapshot.intentCommitment)) return null
+  try {
+    const { checkKind, agreementId, snapshot, policy, terms, nowSeconds } = input
+    if (!equalHash(agreementId, snapshot.agreementId) ||
+        snapshot.state !== (checkKind === 1 ? 3 : 4) ||
+        snapshot.lastNonce < 0n || snapshot.lastNonce >= 2n ** 64n - 1n ||
+        nowSeconds < 0n || !equalHash(terms.intentId, snapshot.intentId) ||
+        !equalHash(hashTerms(terms), snapshot.termsHash) ||
+        !equalHash(snapshot.policyCommitment, snapshot.intentCommitment)) return null
 
-  const matches = policy !== null && equalHash(hashPolicy(policy), snapshot.policyCommitment)
-  let result: boolean
-  if (checkKind === 1) {
-    // Expiration is inclusive, matching AgreementRegistry's block.timestamp > expiresAt guard.
-    result = matches && policy !== null && terms.capital > 0n && terms.duration > 0n &&
-      terms.yieldBps >= policy.minYieldBps && terms.duration <= policy.maxDuration &&
-      nowSeconds <= terms.expiresAt
-  } else {
-    // Missing/wrong policy or unusable feed must never masquerade as SAFE or BREACHED.
-    if (!matches || policy === null) return null
-    const parsed = positionSchema.safeParse(input.position)
-    if (!parsed.success || !Number.isSafeInteger(input.maxPositionAgeSeconds) ||
-        input.maxPositionAgeSeconds < 0) return null
-    const position = parsed.data
-    const age = nowSeconds - BigInt(position.timestamp)
-    if (!equalHash(position.agreementId, agreementId) || age < 0n ||
-        age > BigInt(input.maxPositionAgeSeconds)) return null
-    result = BigInt(position.currentLossBps) > policy.maxLossBps ||
-      BigInt(position.elapsedSeconds) > policy.maxDuration
+    const matches = policy !== null && equalHash(hashPolicy(policy), snapshot.policyCommitment)
+    let result: boolean
+    if (checkKind === 1) {
+      // Expiration is inclusive, matching AgreementRegistry's block.timestamp > expiresAt guard.
+      result = matches && policy !== null && terms.capital > 0n && terms.duration > 0n &&
+        terms.yieldBps >= policy.minYieldBps && terms.duration <= policy.maxDuration &&
+        nowSeconds <= terms.expiresAt
+    } else {
+      // Missing/wrong policy or unusable feed must never masquerade as SAFE or BREACHED.
+      if (!matches || policy === null) return null
+      const parsed = positionSchema.safeParse(input.position)
+      if (!parsed.success || !Number.isSafeInteger(input.maxPositionAgeSeconds) ||
+          input.maxPositionAgeSeconds < 0) return null
+      const position = parsed.data
+      const age = nowSeconds - BigInt(position.timestamp)
+      if (!equalHash(position.agreementId, agreementId) || age < 0n ||
+          age > BigInt(input.maxPositionAgeSeconds)) return null
+      result = BigInt(position.currentLossBps) > policy.maxLossBps ||
+        BigInt(position.elapsedSeconds) > policy.maxDuration
+    }
+    const decisionNonce = snapshot.lastNonce + 1n
+    return { agreementId, decisionId: deriveDecisionId(agreementId, checkKind, decisionNonce),
+      checkKind, result, decisionNonce }
+  } catch {
+    // Chain/provider values are an untrusted boundary; malformed values fail closed.
+    return null
   }
-  const decisionNonce = snapshot.lastNonce + 1n
-  return { agreementId, decisionId: deriveDecisionId(agreementId, checkKind, decisionNonce),
-    checkKind, result, decisionNonce }
 }

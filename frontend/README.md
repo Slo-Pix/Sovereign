@@ -5,9 +5,10 @@ Use **Node 22** for production builds. Bun can run agent tests but Bun 1.3.13's 
 ## Implemented integration
 
 - Agent EIP-712 signing imports core's canonical seven-field type and digest. `proposer` is the counterparty address; `proposerRole` is unsigned negotiation metadata. Both agents require `{intentId,principal,counterparty}` binding and second-based durations. Final terms retain expiry and offer nonce, separate from decision nonce.
-- The wallet button uses Privy's wallet connection modal only on explicit click. It restores/displays the connected account through Privy and does not request a signature, transaction, or protocol authorization.
+- The wallet button uses Privy's wallet connection modal only on explicit click. The participant workspace uses the connected wallet for explicit, user-approved Sepolia and Arc transactions and EIP-712 signatures; it never receives a private key.
+- `/create-intent` is the participant transaction workspace: it hashes a private policy in memory, creates an intent, opens and binds an agreement, captures the counterparty's canonical signature, finalizes terms (emitting `ValidationRequested`), and submits an exact-value Arc USDC allowance.
 - `/monitoring` accepts an actual bytes32 agreement ID and reads `/api/agreements/:id/status`. The server reads finalized Sepolia/Arc blocks and returns only public state/block numbers. Errors do not fall back to mock data. No private position endpoint or token is exposed to the browser.
-- Opening an agreement by its bytes32 identifier reads live contract state on both chains; other dashboard pages render public terms only. No page displays private policy inputs, position readings or SAFE history, and none of them claims ZK proofs or TEE execution.
+- Opening an agreement by its bytes32 identifier reads live contract state on both chains. Other dashboard pages render public terms and status. The workspace never sends the private policy or salt onchain: only its commitment is included in `createIntent`; the optional CRE-secret export is a user-controlled clipboard handoff. No page displays private position readings or SAFE history, and none claims ZK proofs or TEE execution.
 
 ## Server configuration and checks
 
@@ -30,13 +31,13 @@ npm run start
 
 A value exported only in the shell before `npm run start` has no effect; it must be present during `npm run build`, or in `.env.local` when running `npm run dev`.
 
-The frontend intentionally keeps embedded-wallet creation disabled. Privy is used for wallet connection and account display only; transaction and signing flows remain disabled in this read-only interface. If the application ID is missing, the UI shows a configuration state and does not fall back to direct `window.ethereum` or MetaMask calls.
+The frontend intentionally keeps embedded-wallet creation disabled. Privy is used for wallet connection, signing, and explicit transaction approval; no private key is handled by the application. If the application ID is missing, the UI shows a configuration state and does not fall back to direct `window.ethereum` or MetaMask calls.
 
 Optional server-only `SEPOLIA_RPC_URL` and `ARC_RPC_URL` override public read RPCs. Never prefix credentials with `NEXT_PUBLIC_`; never configure the private position read token in the frontend. Contract addresses come from [canonical deployments](../deployments/canonical.json). Public status is read-only and unauthenticated because it returns public chain data, but production needs edge IP/global rate limits, request timeouts and budget controls to protect RPC access. No durable public-endpoint limiter is claimed here.
 
 From this directory: `npm ci --ignore-scripts`, `npm run typecheck`, `npm run lint`, `npm test`, then `npm run build`. `npm test` includes API and agent tests; agent tests can also run from their own workspace. Build output must not be committed. Remote package/Node availability and dependency audits remain operator responsibilities.
 
-The [private position provider](../packages/position-feed/README.md), [CRE workflow](../packages/cre/README.md) and [trusted relayer](../packages/relayer/README.md) are separate services. The public UI does not operate their private credentials or silently submit transactions. Local lifecycle tests and provider tests are reproducible from those packages; public deployment remains gated on actual identity/wallet configuration and authorization.
+The [private position provider](../packages/position-feed/README.md), [CRE workflow](../packages/cre/README.md) and [trusted relayer](../packages/relayer/README.md) are separate services. CRE evaluation is scheduler-driven after `ValidationRequested`; the relayer alone can lock, settle, or unwind escrow. The public UI exposes their finalized public state and handoff status but never operates their private credentials or privileged writes. Local lifecycle tests and provider tests are reproducible from those packages; public deployment remains gated on actual identity/wallet configuration and authorization.
 
 The Next.js starter's general editor/deployment instructions follow.
 
