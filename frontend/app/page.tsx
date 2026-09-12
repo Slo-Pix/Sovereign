@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import WalletConnection from "@/components/ui/WalletConnection";
 import canonical from "../../deployments/canonical.json";
 
@@ -47,9 +48,19 @@ const stack = [
 export default function LandingPage() {
   return (
     <div className="bg-surface-container-low text-on-surface min-h-screen font-body-md">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:bg-on-surface focus:px-3 focus:py-2 focus:text-surface-container-lowest focus:font-code-sm">
+        Skip to content
+      </a>
       <header className="sticky top-0 z-30 border-b-2 border-on-surface bg-surface-container-low px-4 md:px-10 py-3 flex items-center justify-between gap-3">
         <Link href="/" className="flex items-center gap-3 font-headline-sm font-bold">
-          <img src="/logo.png" alt="Sovereign Logo" style={{ width: "120px", height: "120px" }} className="object-contain" />
+          <Image
+            src="/logo.png"
+            alt="Sovereign"
+            width={132}
+            height={55}
+            priority
+            className="h-auto w-32 object-contain"
+          />
         </Link>
         <p className="font-code-sm text-[10px] md:text-sm font-bold flex items-center gap-2">
           <span className="w-2 h-2 bg-primary-container border border-on-surface" aria-hidden />
@@ -58,11 +69,11 @@ export default function LandingPage() {
         <WalletConnection />
       </header>
 
-      <main className="grid-bg">
+      <main className="grid-bg" id="main-content">
         <section className="max-w-7xl mx-auto px-6 md:px-10 pt-16 pb-16 border-b-2 border-on-surface" id="overview">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            <div className="lg:col-span-7">
-              <p className="font-code-sm uppercase tracking-widest mb-6">Private risk policy, enforced onchain</p>
+            <div className="lg:col-span-7 reveal-up">
+              <p className="hairline-label font-code-sm uppercase tracking-widest mb-6">Private risk policy, enforced onchain</p>
               <h1 className="font-display-lg text-display-lg md:text-[58px] md:leading-[62px] font-bold tracking-tight mb-6">
                 Enforce your terms.<br /><span className="underline decoration-primary-container decoration-4 underline-offset-8">Never reveal them.</span>
               </h1>
@@ -71,20 +82,20 @@ export default function LandingPage() {
                 and publish only the decision needed for enforcement. No thresholds onchain. SAFE monitoring stays silent.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link href={`/agreements/${AGREEMENT}`} className="bg-primary-container text-on-primary border-2 border-on-surface px-6 py-3 font-code-md font-bold neo-shadow neo-press">See a live agreement</Link>
-                <Link href="/overview" className="bg-surface-container-lowest border-2 border-on-surface px-6 py-3 font-code-md font-bold neo-shadow neo-press">Open the dashboard</Link>
+                <Link href={`/agreements/${AGREEMENT}`} className="bg-primary-container text-on-primary border-2 border-on-surface px-6 py-3 font-code-md font-bold neo-shadow neo-press hover:bg-primary">See a live agreement</Link>
+                <Link href="/overview" className="bg-surface-container-lowest border-2 border-on-surface px-6 py-3 font-code-md font-bold neo-shadow neo-press hover:bg-surface-container-high">Open the dashboard</Link>
               </div>
-              <div className="grid grid-cols-3 gap-3 border-2 border-on-surface bg-surface-container-lowest p-4 mt-10">
-                <div><p className="text-xs font-code-sm">CHAINS SETTLED ACROSS</p><p className="text-3xl font-bold">02</p></div>
-                <div><p className="text-xs font-code-sm">POLICY VALUES PUBLISHED</p><p className="text-3xl font-bold">00</p></div>
-                <div><p className="text-xs font-code-sm">CONTRACTS VERIFIED</p><p className="text-3xl font-bold">05</p></div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-0 border-2 border-on-surface bg-surface-container-lowest p-4 mt-10 neo-shadow-sm">
+                <div className="border-b sm:border-b-0 sm:border-r border-surface-container-highest pb-3 sm:pb-0 sm:pr-3"><p className="text-xs font-code-sm">CHAINS SETTLED ACROSS</p><p className="text-3xl font-bold">02</p></div>
+                <div className="border-b sm:border-b-0 sm:border-r border-surface-container-highest py-3 sm:py-0 sm:px-3"><p className="text-xs font-code-sm">POLICY VALUES PUBLISHED</p><p className="text-3xl font-bold">00</p></div>
+                <div className="pt-3 sm:pt-0 sm:pl-3"><p className="text-xs font-code-sm">CONTRACTS VERIFIED</p><p className="text-3xl font-bold">05</p></div>
               </div>
             </div>
-            <div className="lg:col-span-5 border-2 border-on-surface bg-surface-container-lowest p-6 neo-shadow-lg">
+            <div className="lg:col-span-5 border-2 border-on-surface bg-surface-container-lowest p-6 neo-shadow-lg reveal-up reveal-delay-2">
               <h2 className="font-code-md font-bold border-b-2 border-on-surface pb-3 mb-5">HOW AN AGREEMENT RUNS</h2>
               <div className="space-y-4">
                 {lifecycle.map(([step, title, description]) => (
-                  <div key={step} className="border border-on-surface bg-surface-container-low p-4">
+                  <div key={step} className="border border-on-surface bg-surface-container-low p-4 transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-[2px_2px_0px_#3155ff]">
                     <p className="font-code-sm text-primary font-bold">{step} / {title}</p>
                     <p className="text-sm text-secondary mt-2">{description}</p>
                   </div>
@@ -121,8 +132,12 @@ export default function LandingPage() {
           <p className="font-code-sm text-secondary mb-2">CAPABILITIES</p>
           <h2 className="font-headline-lg text-headline-lg font-bold mb-8">Built for agreements that have to hold.</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {features.map(feature => (
-              <article key={feature.title} className="border-2 border-on-surface bg-surface-container-lowest p-6 neo-shadow">
+            {features.map((feature, index) => (
+              <article key={feature.title} className={`border-2 border-on-surface bg-surface-container-lowest p-6 neo-shadow neo-hover transition-transform duration-200 reveal-up reveal-delay-${Math.min(index % 4, 3)}`}>
+                <div className="flex items-center justify-between border-b border-surface-container-highest pb-3 mb-4">
+                  <span className="font-label-caps text-label-caps text-secondary">0{index + 1}</span>
+                  <span className="status-marker" aria-hidden="true" />
+                </div>
                 <h3 className="font-headline-sm font-bold">{feature.title}</h3>
                 <p className="mt-3 text-secondary">{feature.body}</p>
               </article>

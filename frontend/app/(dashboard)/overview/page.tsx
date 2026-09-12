@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight, Bot, LockKeyhole, Plus, TrendingUp, History } from "lucide-react";
 import { AUDIT_LOG } from "@/lib/mock-data";
 
 export default function OverviewPage() {
@@ -29,7 +30,7 @@ export default function OverviewPage() {
             className="px-unit-6 py-unit-3 bg-primary-container text-on-primary font-code-md text-code-md uppercase font-bold border-2 border-on-surface flex items-center justify-center gap-unit-2 neo-press hover:bg-primary"
             style={{ boxShadow: "2px 2px 0px #1b1c19" }}
           >
-            <span className="material-symbols-outlined text-base">add_circle</span>
+            <Plus size={16} strokeWidth={2.5} aria-hidden="true" />
             NEW INTENT
           </Link>
         </div>
@@ -45,7 +46,7 @@ export default function OverviewPage() {
             $100,000<span className="text-secondary text-2xl">.00</span>
           </div>
           <div className="font-code-sm text-code-sm text-secondary uppercase mt-unit-2 flex items-center gap-1">
-            <span className="material-symbols-outlined text-sm">lock</span>
+            <LockKeyhole size={14} strokeWidth={2.5} aria-hidden="true" />
             1 ACTIVE
           </div>
         </div>
@@ -57,7 +58,7 @@ export default function OverviewPage() {
             8.40%
           </div>
           <div className="font-code-sm text-code-sm text-secondary uppercase mt-unit-2 flex items-center gap-1">
-            <span className="material-symbols-outlined text-sm text-tertiary">trending_up</span>
+            <TrendingUp size={14} strokeWidth={2.5} className="text-tertiary" aria-hidden="true" />
             AGREED APR
           </div>
         </div>
@@ -81,7 +82,7 @@ export default function OverviewPage() {
             02 <span className="text-secondary text-2xl">/ 02</span>
           </div>
           <div className="font-code-sm text-code-sm text-secondary uppercase mt-unit-2 flex items-center gap-1">
-            <span className="material-symbols-outlined text-sm">smart_toy</span>
+            <Bot size={14} strokeWidth={2.5} aria-hidden="true" />
             NEGOTIATING
           </div>
         </div>
@@ -129,7 +130,7 @@ export default function OverviewPage() {
             href="/agreements/SOV-8F29"
             className="mt-unit-6 px-unit-4 py-unit-3 w-full bg-surface-container-lowest text-on-surface border-2 border-on-surface font-code-md text-code-md uppercase font-bold text-center neo-press hover:bg-surface-container flex items-center justify-center gap-2 shadow-[2px_2px_0px_#1b1c19]"
           >
-            VIEW TERMS <span className="material-symbols-outlined text-sm">arrow_forward</span>
+            VIEW TERMS <ArrowRight size={15} strokeWidth={2.5} aria-hidden="true" />
           </Link>
         </div>
         <div className="lg:w-2/3 p-unit-6 flex flex-col justify-between">
@@ -175,9 +176,7 @@ export default function OverviewPage() {
                   className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-unit-3 border border-on-surface bg-surface-container-low"
                 >
                   <div className="flex items-center gap-unit-3">
-                    <span className="material-symbols-outlined text-base text-secondary">
-                      history_toggle_off
-                    </span>
+                    <History size={16} strokeWidth={2} className="text-secondary" aria-hidden="true" />
                     <span className="font-code-sm text-code-sm font-medium">{log.action}</span>
                   </div>
                   <div className="flex items-center gap-unit-3">

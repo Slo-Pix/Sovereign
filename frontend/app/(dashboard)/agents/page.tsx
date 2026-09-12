@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Cpu } from "lucide-react";
 import { AGENTS } from "@/lib/mock-data";
 
 export default function AgentsPage() {
@@ -93,7 +94,7 @@ export default function AgentsPage() {
                   <div>
                     <div className="font-label-caps text-label-caps text-secondary">HARDWARE ENVIRONMENT</div>
                     <div className="font-code-sm text-code-sm font-bold text-on-surface mt-0.5 flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[14px]">memory</span>
+                      <Cpu size={14} strokeWidth={2.25} aria-hidden="true" />
                       {agent.hardwareKey}
                     </div>
                   </div>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import StatusBadge from "@/components/ui/StatusBadge";
 import { AGREEMENTS } from "@/lib/mock-data";
 import canonical from "../../../../deployments/canonical.json";
@@ -98,7 +99,7 @@ export default function AgreementsPage() {
                     href={`/agreements/${agreement.id}`}
                     className="inline-flex items-center gap-1 font-code-sm text-code-sm font-bold text-on-surface border border-on-surface px-unit-3 py-1 bg-surface-container-lowest hover:bg-surface-container neo-shadow-sm neo-press"
                   >
-                    INSPECT <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                    INSPECT <ArrowRight size={14} strokeWidth={2.5} aria-hidden="true" />
                   </Link>
                 </td>
               </tr>

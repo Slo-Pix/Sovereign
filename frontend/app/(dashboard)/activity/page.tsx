@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LockKeyhole } from "lucide-react";
 import StatusBadge from "@/components/ui/StatusBadge";
 import { ACTIVITY_EVENTS } from "@/lib/mock-data";
 
@@ -85,7 +86,7 @@ export default function ActivityPage() {
       <div className="flex items-center justify-between text-xs font-code-sm text-secondary bg-surface-container-low border border-on-surface p-unit-3">
         <span>Showing the {ACTIVITY_EVENTS.length} most recent events.</span>
         <div className="flex items-center gap-unit-2">
-          <span className="material-symbols-outlined text-[14px]">lock</span>
+          <LockKeyhole size={14} strokeWidth={2.5} aria-hidden="true" />
           <span>SEPOLIA + ARC</span>
         </div>
       </div>

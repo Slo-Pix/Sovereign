@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight, GitBranch } from "lucide-react";
 import { NEGOTIATION_ROUNDS } from "@/lib/mock-data";
 
 export default function NegotiationPage() {
@@ -97,7 +98,7 @@ export default function NegotiationPage() {
       <section className="flex flex-col gap-unit-4">
         <div className="flex items-center justify-between border-b border-on-surface pb-unit-2">
           <div className="flex items-center gap-unit-2">
-            <span className="material-symbols-outlined text-[18px]">alt_route</span>
+            <GitBranch size={18} strokeWidth={2.25} aria-hidden="true" />
             <h2 className="font-label-caps text-label-caps font-bold uppercase tracking-wider text-on-surface">
               PUBLIC OFFER TIMELINE
             </h2>
@@ -179,7 +180,7 @@ export default function NegotiationPage() {
           </div>
           <Link href="/agreements/SOV-8F29" className="bg-primary-container text-on-primary font-body-md text-body-md font-bold px-unit-6 py-unit-4 border-[1.5px] border-on-surface neo-shadow-blue hover:bg-primary neo-press flex items-center justify-center gap-unit-2">
             <span>VIEW AGREEMENT</span>
-            <span className="material-symbols-outlined text-[18px]">arrow_forward</span>
+            <ArrowRight size={18} strokeWidth={2.5} aria-hidden="true" />
           </Link>
         </div>
       </section>

@@ -165,17 +165,17 @@ const config: Config = {
           },
         ],
         "body-md": [
-          "14px",
+          "15px",
           {
-            lineHeight: "20px",
+            lineHeight: "22px",
             letterSpacing: "0em",
             fontWeight: "400",
           },
         ],
         "body-sm": [
-          "12px",
+          "13px",
           {
-            lineHeight: "16px",
+            lineHeight: "18px",
             letterSpacing: "0.01em",
             fontWeight: "400",
           },
@@ -205,25 +205,25 @@ const config: Config = {
           },
         ],
         "code-md": [
-          "13px",
+          "14px",
           {
-            lineHeight: "18px",
+            lineHeight: "20px",
             letterSpacing: "-0.01em",
             fontWeight: "500",
           },
         ],
         "code-sm": [
-          "11px",
+          "12px",
           {
-            lineHeight: "14px",
+            lineHeight: "16px",
             letterSpacing: "0.02em",
             fontWeight: "500",
           },
         ],
         "label-caps": [
-          "10px",
+          "11px",
           {
-            lineHeight: "12px",
+            lineHeight: "14px",
             letterSpacing: "0.08em",
             fontWeight: "600",
           },

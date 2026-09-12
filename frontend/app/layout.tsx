@@ -3,9 +3,14 @@ import "./globals.css";
 import Providers from "./providers";
 
 export const metadata: Metadata = {
-  title: "Sovereign // Private Policy Enforcement",
+  title: "Sovereign",
   description:
     "Private risk policies, enforced onchain across Ethereum and Arc without publishing the policy.",
+  icons: {
+    icon: "/logo_part.png",
+    shortcut: "/logo_part.png",
+    apple: "/logo_part.png",
+  },
 };
 
 export default function RootLayout({
