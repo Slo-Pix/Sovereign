@@ -47,6 +47,7 @@ import {
 
 const STORAGE_KEY = "sovereign.public-workspace.v1";
 const STORAGE_EVENT = "sovereign-public-workspace-change";
+const POLICY_SALT_KEY = "sovereign.private-policy-salt.v1";
 const sepolia = defineChain({
   id: SEPOLIA_CHAIN_ID,
   name: "Sepolia",
@@ -146,15 +147,24 @@ export default function AgreementWorkspace() {
   const { ready, wallets } = useWallets();
   const wallet = wallets[0];
   const account = wallet?.address as Address | undefined;
+  function walletFor(expected?: string) {
+    if (!expected) return wallet;
+    return wallets.find((candidate) => sameAddress(candidate.address, expected));
+  }
   const storedWorkspace = useSyncExternalStore(subscribeToWorkspace, readStoredWorkspace, readServerWorkspace);
   const deal = useMemo(() => parseStoredWorkspace(storedWorkspace), [storedWorkspace]);
   const [minYield, setMinYield] = useState("8.00");
   const [maxLoss, setMaxLoss] = useState("3.00");
-  const [salt, setSalt] = useState("");
+  const [salt, setSalt] = useState(() => typeof window === "undefined" ? "" : sessionStorage.getItem(POLICY_SALT_KEY) ?? "");
   const [active, setActive] = useState<ActionState>(null);
   const [notice, setNotice] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [snapshot, setSnapshot] = useState<StatusSnapshot | null>(null);
+
+  useEffect(() => {
+    if (salt) sessionStorage.setItem(POLICY_SALT_KEY, salt);
+    else sessionStorage.removeItem(POLICY_SALT_KEY);
+  }, [salt]);
 
   const readStatus = useCallback(async (agreementId: string, signal?: AbortSignal): Promise<StatusSnapshot> => {
     const id = asBytes32(agreementId, "Agreement ID");
@@ -197,14 +207,16 @@ export default function AgreementWorkspace() {
 
   const validationRequested = Boolean(deal.finalizeTx) || [snapshot?.chains.sepolia.state, snapshot?.latest?.sepolia.state]
     .some((state) => state === "PENDING_VALIDATION" || ["ACTIVE", "BREACHED", "UNWIND", "SETTLED", "REJECTED"].includes(state ?? ""));
+  const registryState = snapshot?.latest?.sepolia.state ?? snapshot?.chains.sepolia.state;
+  const counterpartyBound = ["NEGOTIATING", "PENDING_VALIDATION", "ACTIVE", "BREACHED", "UNWIND", "SETTLED", "CANCELLED", "REJECTED"].includes(registryState ?? "");
   const steps = useMemo(() => [
     { label: "Intent", complete: Boolean(deal.intentId) },
     { label: "Open", complete: Boolean(deal.agreementId) },
-    { label: "Counterparty", complete: Boolean(deal.agreementId && deal.counterparty) },
+    { label: "Counterparty", complete: counterpartyBound },
     { label: "Signed terms", complete: Boolean(deal.signature) },
     { label: "CRE requested", complete: validationRequested },
     { label: "Arc approved", complete: Boolean(deal.approvalTx) || snapshot?.chains.arc.state === "ACTIVE" || snapshot?.chains.arc.state === "UNWOUND" || snapshot?.chains.arc.state === "SETTLED" },
-  ], [deal, snapshot, validationRequested]);
+  ], [counterpartyBound, deal, snapshot, validationRequested]);
 
   function update<K extends keyof PublicWorkspace>(key: K, value: PublicWorkspace[K]) {
     const signedFields: Array<keyof PublicWorkspace> = ["intentId", "agreementId", "principal", "counterparty", "capital", "durationDays", "yieldPercent", "expiryHours", "nonce"];
@@ -234,17 +246,24 @@ export default function AgreementWorkspace() {
   }
 
   function requireAccount(expected?: string, role?: string): Address {
-    if (!ready || !wallet || !account) throw new Error("Connect a wallet before submitting this action.");
-    if (expected && !sameAddress(account, expected)) throw new Error(`Connect the ${role ?? "required"} wallet (${shortHash(expected)}).`);
-    return account;
+    const selectedWallet = walletFor(expected);
+    if (!ready || !selectedWallet) {
+      if (expected) throw new Error(`Connect the ${role ?? "required"} wallet (${shortHash(expected)}).`);
+      throw new Error("Connect a wallet before submitting this action.");
+    }
+    return selectedWallet.address as Address;
   }
 
-  async function clients(chain: typeof sepolia | typeof arc) {
-    if (!wallet) throw new Error("Connect a wallet before submitting this action.");
+  async function clients(chain: typeof sepolia | typeof arc, targetAddress?: string) {
+    const selectedWallet = walletFor(targetAddress);
+    if (!selectedWallet) {
+      if (targetAddress) throw new Error(`Connect the required wallet (${shortHash(targetAddress)}).`);
+      throw new Error("Connect a wallet before submitting this action.");
+    }
     try {
-      await wallet.switchChain(chain.id);
+      await selectedWallet.switchChain(chain.id);
     } catch (switchError) {
-      const provider = await wallet.getEthereumProvider();
+      const provider = await selectedWallet.getEthereumProvider();
       try {
         await provider.request({
           method: "wallet_addEthereumChain",
@@ -260,10 +279,10 @@ export default function AgreementWorkspace() {
         throw switchError;
       }
     }
-    const provider = await wallet.getEthereumProvider();
+    const provider = await selectedWallet.getEthereumProvider();
     return {
       publicClient: createPublicClient({ chain, transport: custom(provider) }),
-      walletClient: createWalletClient({ account: account!, chain, transport: custom(provider) }),
+      walletClient: createWalletClient({ account: selectedWallet.address as Address, chain, transport: custom(provider) }),
     };
   }
 
@@ -302,7 +321,7 @@ export default function AgreementWorkspace() {
         salt: policySalt,
       });
       const capital = parseUsdc(deal.capital);
-      const { publicClient, walletClient } = await clients(sepolia);
+      const { publicClient, walletClient } = await clients(sepolia, principal);
       const hash = await walletClient.writeContract({
         address: canonical.sepolia.intentRegistry as Address,
         abi: intentAbi as Abi,
@@ -322,9 +341,9 @@ export default function AgreementWorkspace() {
   async function openAgreement() {
     start("open", "Opening agreement");
     try {
-      requireAccount(deal.principal, "principal");
+      const principal = requireAccount(deal.principal, "principal");
       const intentId = asBytes32(deal.intentId, "Intent ID");
-      const { publicClient, walletClient } = await clients(sepolia);
+      const { publicClient, walletClient } = await clients(sepolia, principal);
       const hash = await walletClient.writeContract({ address: canonical.sepolia.agreementRegistry as Address, abi: agreementAbi as Abi, functionName: "openAgreement", args: [intentId] });
       const receipt = await publicClient.waitForTransactionReceipt({ hash });
       const events = parseEventLogs({ abi: agreementAbi as Abi, logs: receipt.logs, eventName: "AgreementOpened", strict: true }) as unknown as Array<{ args: { agreementId: Hex } }>;
@@ -339,13 +358,14 @@ export default function AgreementWorkspace() {
   async function beginNegotiation() {
     start("negotiate", "Starting negotiation");
     try {
-      requireAccount(deal.principal, "principal");
+      const principal = requireAccount(deal.principal, "principal");
       const agreementId = asBytes32(deal.agreementId, "Agreement ID");
       const counterparty = asAddress(deal.counterparty, "Counterparty");
       if (sameAddress(deal.principal, counterparty)) throw new Error("Principal and counterparty must be different wallets.");
-      const { publicClient, walletClient } = await clients(sepolia);
+      const { publicClient, walletClient } = await clients(sepolia, principal);
       const hash = await walletClient.writeContract({ address: canonical.sepolia.agreementRegistry as Address, abi: agreementAbi as Abi, functionName: "beginNegotiation", args: [agreementId, counterparty] });
       await publicClient.waitForTransactionReceipt({ hash });
+      setSnapshot(await readStatus(deal.agreementId));
       finish("Counterparty bound. Agreement is NEGOTIATING on Sepolia.");
     } catch (cause) {
       fail("Begin negotiation", cause);
@@ -357,7 +377,7 @@ export default function AgreementWorkspace() {
     try {
       const signer = requireAccount(deal.counterparty, "counterparty");
       const proposed = terms();
-      const { walletClient } = await clients(sepolia);
+      const { walletClient } = await clients(sepolia, signer);
       const signature = await walletClient.signTypedData({ account: signer, ...offerTypedData(proposed, canonical.sepolia.agreementRegistry as Address) });
       setDeal((current) => ({ ...current, expiresAt: proposed.expiresAt.toString(), signature }));
       finish("Counterparty EIP-712 signature captured. No private policy value was signed.");
@@ -369,18 +389,29 @@ export default function AgreementWorkspace() {
   async function finalizeAgreement() {
     start("finalize", "Requesting CRE validation");
     try {
-      requireAccount(deal.principal, "principal");
+      const principal = requireAccount(deal.principal, "principal");
       const agreementId = asBytes32(deal.agreementId, "Agreement ID");
       const signature = deal.signature as Hex;
       if (!/^0x[0-9a-fA-F]{128}(?:[0-9a-fA-F]{2})?$/.test(signature)) throw new Error("A valid EIP-712 signature is required.");
       const proposed = terms();
-      const { publicClient, walletClient } = await clients(sepolia);
-      const hash = await walletClient.writeContract({
+      const { publicClient, walletClient } = await clients(sepolia, principal);
+      const current = await readStatus(deal.agreementId);
+      setSnapshot(current);
+      const currentState = current.latest?.sepolia.state ?? current.chains.sepolia.state;
+      if (currentState !== "NEGOTIATING") {
+        throw new Error(currentState === "OPEN"
+          ? "The agreement is still OPEN on Sepolia. Submit Begin negotiation before requesting CRE validation."
+          : `The agreement cannot request CRE validation while its Sepolia state is ${currentState}.`);
+      }
+      const call = {
         address: canonical.sepolia.agreementRegistry as Address,
         abi: agreementAbi as Abi,
         functionName: "finalizeAgreement",
         args: [agreementId, proposed, signature],
-      });
+        account: principal,
+      } as const;
+      const { request } = await publicClient.simulateContract(call);
+      const hash = await walletClient.writeContract(request);
       await publicClient.waitForTransactionReceipt({ hash });
       update("finalizeTx", hash);
       finish("Terms finalized. ValidationRequested was emitted for the CRE workflow.");
@@ -393,9 +424,9 @@ export default function AgreementWorkspace() {
   async function approveEscrow() {
     start("approve", "Approving Arc escrow");
     try {
-      requireAccount(deal.principal, "principal");
+      const principal = requireAccount(deal.principal, "principal");
       const capital = parseUsdc(deal.capital);
-      const { publicClient, walletClient } = await clients(arc);
+      const { publicClient, walletClient } = await clients(arc, principal);
       const hash = await walletClient.writeContract({
         address: canonical.arcTestnet.usdc as Address,
         abi: erc20Abi,
@@ -423,7 +454,7 @@ export default function AgreementWorkspace() {
 
   async function copyPolicy() {
     try {
-      if (!salt) throw new Error("Generate the policy commitment before exporting the CRE secret.");
+      if (!salt) throw new Error("This workspace has the public commitment but not its private policy salt. Restore the original salt or create a new intent.");
       await navigator.clipboard.writeText(JSON.stringify({
         minYieldBps: percentToBps(minYield).toString(),
         maxLossBps: percentToBps(maxLoss).toString(),
@@ -505,7 +536,7 @@ export default function AgreementWorkspace() {
               </div>
               <div className="flex flex-wrap gap-2 border-t border-on-surface pt-4">
                 <button type="button" className={actionClass} onClick={openAgreement} disabled={busy || !deal.intentId || Boolean(deal.agreementId)}><LockKeyhole size={16} />Open agreement</button>
-                <button type="button" className={actionClass} onClick={beginNegotiation} disabled={busy || !deal.agreementId || !deal.counterparty}><RefreshCw size={16} />Begin negotiation</button>
+                <button type="button" className={actionClass} onClick={beginNegotiation} disabled={busy || !deal.agreementId || !deal.counterparty || registryState !== "OPEN"}><RefreshCw size={16} />{counterpartyBound ? "Negotiation started" : "Begin negotiation"}</button>
               </div>
             </div>
           </section>
@@ -525,7 +556,7 @@ export default function AgreementWorkspace() {
               <div className="font-code-sm"><span className="text-secondary">SIGNER </span><strong>{deal.counterparty ? shortHash(deal.counterparty) : "COUNTERPARTY REQUIRED"}</strong></div>
               <div className="flex flex-wrap gap-2">
                 <button type="button" className={actionClass} onClick={signTerms} disabled={busy || !deal.agreementId || !deal.counterparty}><FileSignature size={16} />Sign EIP-712</button>
-                <button type="button" className={`${actionClass} !bg-primary-container`} onClick={finalizeAgreement} disabled={busy || !deal.signature || validationRequested}><ShieldCheck size={16} />{validationRequested ? "CRE requested" : "Submit for CRE"}</button>
+                <button type="button" className={`${actionClass} !bg-primary-container`} onClick={finalizeAgreement} disabled={busy || !deal.signature || validationRequested || registryState !== "NEGOTIATING"} title={registryState === "OPEN" ? "Begin negotiation on Sepolia first" : undefined}><ShieldCheck size={16} />{validationRequested ? "CRE requested" : "Submit for CRE"}</button>
               </div>
             </footer>
             {deal.finalizeTx && <a className="flex items-center justify-between border-t-2 border-on-surface px-4 py-3 font-code-sm font-bold" href={`${canonical.sepolia.explorer}/tx/${deal.finalizeTx}`} target="_blank" rel="noreferrer">Validation request {shortHash(deal.finalizeTx)}<ExternalLink size={15} /></a>}

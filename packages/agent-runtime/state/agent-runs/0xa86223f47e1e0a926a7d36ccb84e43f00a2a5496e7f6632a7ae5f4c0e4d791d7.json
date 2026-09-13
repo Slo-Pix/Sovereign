@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "runId": "agent-a86223f4-1789289010298",
+  "status": "CONVERGED",
+  "intentId": "0xa86223f47e1e0a926a7d36ccb84e43f00a2a5496e7f6632a7ae5f4c0e4d791d7",
+  "principal": "0x335E58172fC8895Bc380471972A22Ea921152F6d",
+  "counterparty": "0xE712ABcF226767E24D1243f434aB1638652ac857",
+  "terms": {
+    "duration": 2332800,
+    "yieldBps": 850,
+    "expiresAt": 1789375410,
+    "nonce": "2"
+  },
+  "treasurySignature": "0xac7452cd5ba8cdf265abb3e3e4dc7efb77bfe261f76b5d2064721bf4fccd4f75296c1ab339b0f06561d27fd69a6cf0b8e6943c0a7bc5a6a0abc7722ba245dc4b1b",
+  "strategySignature": "0xfe35712eff0e6fcfd676184f6048b5c9586c079fec999d293c799ce7ba05870e5232c4b539f9bac3ffe76f66b96f13c890b6730af43bde4ccd6cc38d4e8b98711b",
+  "rounds": 4,
+  "completedAt": "2026-09-13T08:43:30.332Z"
+}

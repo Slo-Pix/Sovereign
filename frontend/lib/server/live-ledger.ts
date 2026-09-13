@@ -110,10 +110,13 @@ export async function indexLiveAgreements(): Promise<LiveAgreementIndex> {
   if (source.number === null || destination.number === null) throw new Error("Finalized block unavailable");
   const configuredStart = process.env.AGREEMENT_INDEX_START_BLOCK;
   const lookback = positiveBigInt("AGREEMENT_INDEX_LOOKBACK_BLOCKS", 5000n);
+  const overlap = positiveBigInt("AGREEMENT_INDEX_OVERLAP_BLOCKS", 2000n);
   let requestedFrom = source.number - lookback + 1n;
   if (configuredStart) {
     try {
-      requestedFrom = BigInt(configuredStart);
+      // Include a bounded overlap so a slightly stale operator cursor does not
+      // hide agreements finalized just before the configured start block.
+      requestedFrom = BigInt(configuredStart) - overlap;
     } catch {
       throw new Error("Invalid AGREEMENT_INDEX_START_BLOCK");
     }
@@ -121,5 +124,5 @@ export async function indexLiveAgreements(): Promise<LiveAgreementIndex> {
   const fromBlock = requestedFrom < 0n ? 0n : requestedFrom;
   const ids = await getAgreementLogs(fromBlock, source.number);
   const agreements = (await Promise.all(ids.map((id) => readLiveAgreementAt(id, source.number!, destination.number!)))).sort((a, b) => a.sepoliaBlock < b.sepoliaBlock ? 1 : -1);
-  return { agreements, fromBlock, toBlock: source.number, truncated: !configuredStart && fromBlock > 0n };
+  return { agreements, fromBlock, toBlock: source.number, truncated: fromBlock > 0n };
 }

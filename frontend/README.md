@@ -46,10 +46,12 @@ set these server-only variables in `.env.local`:
 AGREEMENT_INDEX_START_BLOCK=11690500
 AGREEMENT_INDEX_CHUNK_BLOCKS=10
 AGREEMENT_INDEX_RPC_URL=https://ethereum-sepolia-rpc.publicnode.com
+AGREEMENT_INDEX_OVERLAP_BLOCKS=2000
 ```
 
-`AGREEMENT_INDEX_START_BLOCK` takes precedence over the lookback window. The UI
-reports the indexed block window and never substitutes fixture agreements when
+`AGREEMENT_INDEX_START_BLOCK` takes precedence over the lookback window, with a
+2,000-block overlap by default to tolerate a stale cursor. The UI reports the
+indexed block window and never substitutes fixture agreements when
 the provider or index is unavailable. Log discovery can use a separate public
 RPC so rate limits on the state-read provider do not prevent indexing; every
 agreement is still verified through the configured Sepolia and Arc state-read
